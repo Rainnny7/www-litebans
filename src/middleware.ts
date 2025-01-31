@@ -26,9 +26,9 @@ export default clerkMiddleware(
         }
         // Otherwise, get the user from the Clerk client and
         // check to see if they have the allowed role in Discord.
-        if (!(await checkDiscordRole({ userId }))) {
-            return NextResponse.redirect(new URL("/forbidden", req.url));
-        }
+        // if (!(await checkDiscordRole({ userId }))) {
+        //     return NextResponse.redirect(new URL("/forbidden", req.url));
+        // }
     }
 );
 

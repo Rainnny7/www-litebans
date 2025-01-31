@@ -9,6 +9,9 @@ export const env = createEnv({
         CLERK_SECRET_KEY: z.string(),
         CLERK_REQUIRED_GUILD_ID: z.string(),
         CLERK_REQUIRED_ROLE_ID: z.string(),
+
+        // Drizzle
+        DRIZZLE_DATABASE_URL: z.string(),
     },
 
     client: {
@@ -33,6 +36,9 @@ export const env = createEnv({
         CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
         CLERK_REQUIRED_GUILD_ID: process.env.CLERK_REQUIRED_GUILD_ID,
         CLERK_REQUIRED_ROLE_ID: process.env.CLERK_REQUIRED_ROLE_ID,
+
+        // Drizzle
+        DRIZZLE_DATABASE_URL: process.env.DRIZZLE_DATABASE_URL,
     },
 
     /**
