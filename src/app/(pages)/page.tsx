@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
-import { db } from "~/server/db";
-import { banPunishmentRecords } from "~/server/db/schema";
+import { db } from "src/server/drizzle";
+import { banPunishmentRecords } from "~/server/drizzle/schema";
 
-const DashboardPage = async (): ReactElement => {
+const DashboardPage = async (): Promise<ReactElement> => {
     const bans: any[] = await db.select().from(banPunishmentRecords).limit(50);
     console.log({ bans });
     return (

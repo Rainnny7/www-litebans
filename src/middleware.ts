@@ -8,7 +8,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { ClerkClient } from "@clerk/backend";
 import { env } from "~/env";
+import { redis } from "~/server/redis";
 
+const DISCORD_ROLE_CACHE_TTL = 300; // 5 minutes
 const isForbiddenRoute = createRouteMatcher(["/forbidden"]);
 
 export default clerkMiddleware(
@@ -26,9 +28,9 @@ export default clerkMiddleware(
         }
         // Otherwise, get the user from the Clerk client and
         // check to see if they have the allowed role in Discord.
-        // if (!(await checkDiscordRole({ userId }))) {
-        //     return NextResponse.redirect(new URL("/forbidden", req.url));
-        // }
+        if (!(await checkDiscordRole({ userId }))) {
+            return NextResponse.redirect(new URL("/forbidden", req.url));
+        }
     }
 );
 
@@ -37,6 +39,14 @@ const checkDiscordRole = async ({
 }: {
     userId: string;
 }): Promise<boolean> => {
+    const cacheKey = `www-litebans:has-required-role:${userId}`;
+
+    // Before reaching out to Discord, check the cache.
+    const cachedResult: string | null = await redis.get(cacheKey);
+    if (cachedResult) {
+        return `${cachedResult}` === "true";
+    }
+    // Fetch the user's Discord roles from the API.
     const client: ClerkClient = await clerkClient();
 
     // Get the Discord access token for the user, if any.
@@ -64,9 +74,14 @@ const checkDiscordRole = async ({
     }
 
     // Only allow the user access if they have the required role.
-    return (await membershipResponse.json()).roles.includes(
-        env.CLERK_REQUIRED_ROLE_ID
-    ) as boolean;
+    const hasRequiredRole: boolean = (
+        await membershipResponse.json()
+    ).roles.includes(env.CLERK_REQUIRED_ROLE_ID);
+
+    // Before returning the result, cache it.
+    await redis.setex(cacheKey, DISCORD_ROLE_CACHE_TTL, hasRequiredRole);
+
+    return hasRequiredRole;
 };
 
 export const config = {
