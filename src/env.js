@@ -7,6 +7,8 @@ export const env = createEnv({
 
         // Clerk
         CLERK_SECRET_KEY: z.string(),
+        CLERK_REQUIRED_GUILD_ID: z.string(),
+        CLERK_REQUIRED_ROLE_ID: z.string(),
     },
 
     client: {
@@ -29,6 +31,8 @@ export const env = createEnv({
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
             process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
         CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+        CLERK_REQUIRED_GUILD_ID: process.env.CLERK_REQUIRED_GUILD_ID,
+        CLERK_REQUIRED_ROLE_ID: process.env.CLERK_REQUIRED_ROLE_ID,
     },
 
     /**
