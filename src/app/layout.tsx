@@ -58,7 +58,7 @@ const RootLayout = ({
                 }}
             >
                 {/*<Navbar />*/}
-                <div className="min-h-screen px-7 py-5 max-w-screen-xl mx-auto flex flex-col gap-5">
+                <div className="min-h-screen px-7 pb-5 max-w-screen-xl mx-auto flex flex-col gap-5">
                     <SignedIn>
                         <Navbar />
                     </SignedIn>
