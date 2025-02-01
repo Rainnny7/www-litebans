@@ -18,6 +18,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.10.5",
     "@clerk/themes": "^2.2.16",
+    "@radix-ui/react-slot": "^1.1.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@upstash/redis": "^1.34.3",
     "babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
