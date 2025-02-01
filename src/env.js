@@ -22,6 +22,7 @@ export const env = createEnv({
         // App
         NEXT_PUBLIC_APP_NAME: z.string(),
         NEXT_PUBLIC_APP_DESCRIPTION: z.string(),
+        NEXT_PUBLIC_APP_LOGO: z.string(),
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -33,6 +34,7 @@ export const env = createEnv({
         // App
         NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
         NEXT_PUBLIC_APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
+        NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:

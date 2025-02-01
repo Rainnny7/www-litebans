@@ -1,21 +1,23 @@
 import { GeistSans } from "geist/font/sans";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn } from "@clerk/nextjs";
 import { env } from "~/env";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactElement, ReactNode } from "react";
 import "~/styles/globals.css";
 import { cn } from "~/lib/utils";
+import Navbar from "~/components/navbar";
+import { dark as clerkDarkMode } from "@clerk/themes";
 
 export const metadata: Metadata = {
     title: {
         default: env.NEXT_PUBLIC_APP_NAME,
-        template: `%s • ${env.NEXT_PUBLIC_APP_NAME}`,
+        template: `%s | ${env.NEXT_PUBLIC_APP_NAME}`,
     },
     description: env.NEXT_PUBLIC_APP_DESCRIPTION,
     openGraph: {
         images: [
             {
-                url: "/favicon.ico",
+                url: env.NEXT_PUBLIC_APP_LOGO,
                 width: 128,
                 height: 128,
             },
@@ -24,6 +26,10 @@ export const metadata: Metadata = {
     twitter: {
         card: "summary",
     },
+    icons: [{ rel: "icon", url: env.NEXT_PUBLIC_APP_LOGO }],
+};
+export const viewport: Viewport = {
+    themeColor: "#E6E6E6",
 };
 
 /**
@@ -36,16 +42,29 @@ const RootLayout = ({
 }>): ReactElement => (
     <html
         lang="en"
-        className={cn(`${GeistSans.variable} scroll-smooth antialiased`)}
+        className={cn(
+            `${GeistSans.variable} scroll-smooth antialiased select-none`
+        )}
     >
         <body
-            className="mx-auto w-full max-w-screen-2xl min-h-screen"
             style={{
                 background:
                     "linear-gradient(to top, hsl(240, 6%, 10%), hsl(var(--background)))",
             }}
         >
-            <ClerkProvider>{children}</ClerkProvider>
+            <ClerkProvider
+                appearance={{
+                    baseTheme: clerkDarkMode,
+                }}
+            >
+                {/*<Navbar />*/}
+                <div className="min-h-screen px-7 max-w-screen-xl mx-auto flex flex-col gap-5">
+                    <SignedIn>
+                        <Navbar />
+                    </SignedIn>
+                    {children}
+                </div>
+            </ClerkProvider>
         </body>
     </html>
 );
