@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { currentUser, type User } from "@clerk/nextjs/server";
 
-const DashboardPage = async (): ReactElement => {
+const DashboardPage = async (): Promise<ReactElement> => {
     const user: User | null = await currentUser();
     return (
         <main className="py-10 flex flex-col gap-3 justify-center text-center items-center">

@@ -1,6 +1,10 @@
-import { getPunishmentCategory } from "~/types/punishment-category";
+import {
+    getPunishmentCategory,
+    PunishmentCategoryInfo,
+} from "~/types/punishment-category";
 import { notFound } from "next/navigation";
-import { db } from "~/server/drizzle";
+import type { ReactElement } from "react";
+import RecordsTable from "~/components/records-table";
 
 const RecordsPage = async ({
     params,
@@ -13,14 +17,12 @@ const RecordsPage = async ({
     if (!category) {
         notFound();
     }
-    const records: any[] = await db.select().from(category.table).limit(50);
-    console.log({ records });
-
     return (
-        <main>
+        <main className="flex flex-col gap-3">
             <h1 className="text-3xl font-bold">
                 {category.displayName} Records
             </h1>
+            <RecordsTable category={category} />
         </main>
     );
 };

@@ -1,9 +1,17 @@
 import type { MySqlTableWithColumns } from "drizzle-orm/mysql-core";
-import { banPunishmentRecords } from "~/server/drizzle/schema";
+import {
+    banPunishmentRecords,
+    kickPunishmentRecords,
+    mutePunishmentRecords,
+    warningPunishmentRecords,
+} from "~/server/drizzle/schema";
 
-export type PunishmentCategory = Record<"ban" | "mute", PunishmentCategoryInfo>;
+export type PunishmentCategory = Record<
+    "ban" | "mute" | "warning" | "kick",
+    PunishmentCategoryInfo
+>;
 
-type PunishmentCategoryInfo = {
+export type PunishmentCategoryInfo = {
     displayName: string;
     table: MySqlTableWithColumns<any>;
 };
@@ -15,7 +23,15 @@ export const PUNISHMENT_CATEGORIES: PunishmentCategory = {
     },
     mute: {
         displayName: "Mute",
-        table: banPunishmentRecords,
+        table: mutePunishmentRecords,
+    },
+    warning: {
+        displayName: "Warning",
+        table: warningPunishmentRecords,
+    },
+    kick: {
+        displayName: "Kick",
+        table: kickPunishmentRecords,
     },
 };
 
