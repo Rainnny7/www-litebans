@@ -44,7 +44,12 @@ export class Paginator<T> {
      */
     getPage(page: number): Page<T> {
         const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-
+        if (totalPages === 0) {
+            return new Page<T>(
+                [],
+                new PageMetadata(0, 0, page, this.itemsPerPage)
+            );
+        }
         if (page < 1 || page > totalPages) {
             throw new Error("Invalid page number");
         }
