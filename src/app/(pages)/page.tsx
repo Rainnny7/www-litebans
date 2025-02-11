@@ -1,6 +1,11 @@
-import type { ReactElement } from "react";
 import { currentUser, type User } from "@clerk/nextjs/server";
+import type { ReactElement } from "react";
 
+/**
+ * The dashboard page of the app.
+ *
+ * @returns the dashboard page
+ */
 const DashboardPage = async (): Promise<ReactElement> => {
     const user: User | null = await currentUser();
     return (

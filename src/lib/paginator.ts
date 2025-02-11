@@ -47,7 +47,7 @@ export class Paginator<T> {
         if (totalPages === 0) {
             return new Page<T>(
                 [],
-                new PageMetadata(0, 0, page, this.itemsPerPage)
+                new PageMetadata(0, 0, page, this.itemsPerPage, 0, 0)
             );
         }
         if (page < 1 || page > totalPages) {
@@ -57,7 +57,6 @@ export class Paginator<T> {
         // Calculate the range of items to fetch for the current page
         const start = (page - 1) * this.itemsPerPage;
         const end = start + this.itemsPerPage;
-
         let pageItems: T[];
 
         // Use set items if they are present, otherwise use fetchItems callback
@@ -73,7 +72,9 @@ export class Paginator<T> {
                 totalPages,
                 this.totalItems,
                 page,
-                this.itemsPerPage
+                this.itemsPerPage,
+                start,
+                end
             )
         );
     }

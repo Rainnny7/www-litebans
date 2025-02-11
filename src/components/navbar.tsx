@@ -23,7 +23,7 @@ const Navbar = (): ReactElement => (
                     alt={`${env.NEXT_PUBLIC_APP_NAME} Logo`}
                     width={40}
                     height={40}
-                    unoptimized
+                    draggable={false}
                 />
                 <h1 className="hidden sm:flex text-xl font-semibold">
                     {env.NEXT_PUBLIC_APP_NAME}

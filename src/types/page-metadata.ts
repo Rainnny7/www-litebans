@@ -19,15 +19,29 @@ export class PageMetadata {
      */
     public readonly itemsPerPage: number;
 
+    /**
+     * The start index of the items
+     */
+    public readonly start: number;
+
+    /**
+     * The end index of the items
+     */
+    public readonly end: number;
+
     constructor(
         totalPages: number,
         totalItems: number,
         page: number,
-        itemsPerPage: number
+        itemsPerPage: number,
+        start: number,
+        end: number
     ) {
         this.totalPages = totalPages;
         this.totalItems = totalItems;
         this.page = page;
         this.itemsPerPage = itemsPerPage;
+        this.start = start;
+        this.end = end;
     }
 }

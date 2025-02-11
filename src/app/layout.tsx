@@ -1,12 +1,11 @@
 import { GeistSans } from "geist/font/sans";
-import { ClerkProvider, SignedIn } from "@clerk/nextjs";
-import { env } from "~/env";
 import type { Metadata, Viewport } from "next";
 import type { ReactElement, ReactNode } from "react";
-import "~/styles/globals.css";
-import { cn } from "~/lib/utils";
+import AppProviders from "~/components/app-providers";
 import Navbar from "~/components/navbar";
-import { dark as clerkDarkMode } from "@clerk/themes";
+import { env } from "~/env";
+import { cn } from "~/lib/utils";
+import "~/styles/globals.css";
 
 export const metadata: Metadata = {
     title: {
@@ -52,19 +51,12 @@ const RootLayout = ({
                     "linear-gradient(to top, hsl(240, 6%, 10%), hsl(var(--background)))",
             }}
         >
-            <ClerkProvider
-                appearance={{
-                    baseTheme: clerkDarkMode,
-                }}
-            >
-                {/*<Navbar />*/}
+            <AppProviders>
                 <div className="min-h-screen px-7 pb-5 max-w-screen-xl mx-auto flex flex-col gap-5">
-                    <SignedIn>
-                        <Navbar />
-                    </SignedIn>
+                    <Navbar />
                     {children}
                 </div>
-            </ClerkProvider>
+            </AppProviders>
         </body>
     </html>
 );
