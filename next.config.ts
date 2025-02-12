@@ -8,8 +8,12 @@ import "./src/env.js";
 const config: NextConfig = {
     output: "standalone",
     reactStrictMode: true,
-    cacheMaxMemorySize: 0,
     poweredByHeader: false,
+    logging: {
+        fetches: {
+            fullUrl: true,
+        },
+    },
     images: { unoptimized: true },
     eslint: { ignoreDuringBuilds: true },
     typescript: { ignoreBuildErrors: true },
