@@ -14,6 +14,14 @@ import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
 import { fetchRecords } from "~/actions/fetch-records";
 import SimpleTooltip from "~/components/simple-tooltip";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import {
     Pagination,
@@ -40,10 +48,7 @@ const STEVE_AVATAR = "https://api.restfulmc.cc/player/head/Steve.png";
 const ITEMS_PER_PAGE = 10;
 
 type TablePunishmentRecord = BasePunishmentRecord & {
-    player?: {
-        username: string;
-        avatar: string;
-    };
+    player?: { username: string; avatar: string };
 };
 
 const RecordsTable = ({
@@ -350,30 +355,48 @@ const RecordRow = ({
                 "No reason specified"
         );
     return (
-        <TableRow className="cursor-pointer">
-            <TableCell className="hidden md:table-cell text-zinc-300/75">
-                {numberWithCommas(record.id)}
-            </TableCell>
-            <TableCell>
-                <div className="flex gap-3 items-center">
-                    <PlayerAvatar
-                        avatar={record.player?.avatar ?? STEVE_AVATAR}
-                    />
-                    <span className="truncate">
-                        {record.player?.username ?? "Player (Bedrock?)"}
-                    </span>
-                </div>
-            </TableCell>
-            <TableCell className="truncate">{record.bannedByName}</TableCell>
-            <TableCell className="max-h-12 overflow-hidden">
-                <SimpleTooltip content={<span>{colorReason(false)}</span>}>
-                    <div>{colorReason(true)}</div>
-                </SimpleTooltip>
-            </TableCell>
-            <TableCell className="hidden lg:table-cell">
-                {DateTime.fromMillis(record.time).toRelative()}
-            </TableCell>
-        </TableRow>
+        <Dialog>
+            <DialogTrigger asChild>
+                <TableRow className="cursor-pointer">
+                    <TableCell className="hidden md:table-cell text-zinc-300/75">
+                        {numberWithCommas(record.id)}
+                    </TableCell>
+                    <TableCell>
+                        <div className="flex gap-3 items-center">
+                            <PlayerAvatar
+                                avatar={record.player?.avatar ?? STEVE_AVATAR}
+                            />
+                            <span className="truncate">
+                                {record.player?.username ?? "Player (Bedrock?)"}
+                            </span>
+                        </div>
+                    </TableCell>
+                    <TableCell className="truncate">
+                        {record.bannedByName}
+                    </TableCell>
+                    <TableCell className="max-h-12 overflow-hidden">
+                        <SimpleTooltip
+                            content={<span>{colorReason(false)}</span>}
+                        >
+                            <div>{colorReason(true)}</div>
+                        </SimpleTooltip>
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                        {DateTime.fromMillis(record.time).toRelative()}
+                    </TableCell>
+                </TableRow>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your account and remove your data from our
+                        servers.
+                    </DialogDescription>
+                </DialogHeader>
+            </DialogContent>
+        </Dialog>
     );
 };
 

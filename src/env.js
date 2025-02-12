@@ -26,10 +26,6 @@ export const env = createEnv({
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
-
-        // PostHog
-        NEXT_PUBLIC_POSTHOG_KEY: z.string(),
-        NEXT_PUBLIC_POSTHOG_HOST: z.string(),
     },
 
     runtimeEnv: {
@@ -53,10 +49,6 @@ export const env = createEnv({
         // Redis
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
         UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
-
-        // PostHog
-        NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
-        NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     },
 
     /**

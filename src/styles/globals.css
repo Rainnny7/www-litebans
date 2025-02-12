@@ -1,4 +1,6 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
 @plugin 'tailwindcss-animate';
 
 @theme inline {
@@ -110,4 +112,13 @@ body {
 .cl-internal-1hp5nqm,
 .cl-internal-df7v37 {
     display: none;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
 }

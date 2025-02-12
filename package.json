@@ -18,6 +18,7 @@
     "dependencies": {
         "@clerk/nextjs": "^6.11.2",
         "@clerk/themes": "^2.2.17",
+        "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-popover": "^1.1.6",
         "@radix-ui/react-slot": "^1.1.2",
         "@radix-ui/react-tooltip": "^1.1.8",
@@ -34,7 +35,6 @@
         "luxon": "^3.5.0",
         "mysql2": "^3.12.0",
         "next": "^15.1.7",
-        "posthog-js": "^1.217.1",
         "react": "^18.3.1",
         "react-day-picker": "^8.10.1",
         "react-dom": "^18.3.1",
