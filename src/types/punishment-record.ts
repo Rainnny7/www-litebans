@@ -15,3 +15,10 @@ export type BasePunishmentRecord = {
     active: boolean;
     template: number;
 };
+
+export type TablePunishmentRecord = BasePunishmentRecord & {
+    player?: TablePlayerData | undefined;
+    staff?: TablePlayerData | undefined;
+};
+
+export type TablePlayerData = { username: string; avatar: string };

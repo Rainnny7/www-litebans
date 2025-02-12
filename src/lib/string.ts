@@ -28,11 +28,8 @@ const MINECRAFT_COLORS: Record<string, string> = {
  * @param text the text to truncate
  * @param maxLength the maximum length
  */
-export const truncateText = (
-    text: string | undefined,
-    maxLength: number
-): string | undefined =>
-    text && text.length > maxLength
+export const truncateText = (text: string, maxLength: number): string =>
+    text.length > maxLength
         ? text.slice(0, maxLength - 3).trim() + "..."
         : text;
 
@@ -57,10 +54,7 @@ export const formatMinecraftString = (text: string): ReactElement[] => {
             elements.push(
                 createElement(
                     "span",
-                    {
-                        key: index,
-                        style: { color: currentColor },
-                    },
+                    { key: index, style: { color: currentColor } },
                     part
                 )
             );

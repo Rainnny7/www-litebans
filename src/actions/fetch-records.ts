@@ -21,7 +21,7 @@ export type FetchRecordsResponse = {
  */
 export const fetchRecords = async (
     categoryId: string,
-    options: FetchRecordsOptions = { offset: 0, limit: 10 }
+    options: FetchRecordsOptions
 ): Promise<FetchRecordsResponse> => {
     // Ensure the category exists first
     const category = getPunishmentCategory(categoryId);
