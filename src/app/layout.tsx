@@ -48,11 +48,11 @@ const RootLayout = ({
         <body
             style={{
                 background:
-                    "linear-gradient(to top, hsl(240, 6%, 10%), hsl(var(--background)))",
+                    "linear-gradient(to top, hsl(240, 6%, 10%), var(--background))",
             }}
         >
             <AppProviders>
-                <div className="min-h-screen px-7 pb-5 max-w-screen-xl mx-auto flex flex-col gap-5">
+                <div className="min-h-screen px-7 pb-5 max-w-(--breakpoint-xl) mx-auto flex flex-col gap-5">
                     <Navbar />
                     {children}
                 </div>
