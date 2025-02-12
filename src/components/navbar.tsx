@@ -16,7 +16,7 @@ const Navbar = async (): Promise<ReactElement> => {
     return (
         <nav className="-mx-7 px-7 py-5 flex justify-between items-center border-b border-muted">
             {/* Left */}
-            <div className="flex gap-7 sm:gap-10 items-center">
+            <div className="flex gap-7 lg:gap-10 items-center">
                 {/* Branding */}
                 <Link
                     className="flex gap-4 items-center hover:opacity-75 transition-all transform-gpu"
@@ -29,7 +29,7 @@ const Navbar = async (): Promise<ReactElement> => {
                         height={40}
                         draggable={false}
                     />
-                    <h1 className="hidden sm:flex text-xl font-semibold">
+                    <h1 className="hidden lg:flex text-xl font-semibold">
                         {env.NEXT_PUBLIC_APP_NAME}
                     </h1>
                 </Link>
@@ -49,7 +49,7 @@ const Navbar = async (): Promise<ReactElement> => {
                                 >
                                     <span>{category.displayName}s</span>
                                     <Badge
-                                        className="hidden lg:flex px-2 border-white/20"
+                                        className="hidden md:flex px-2 border-white/20"
                                         variant="outline"
                                     >
                                         {numberWithCommas(

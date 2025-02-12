@@ -2,6 +2,7 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 import type { ReactElement, ReactNode } from "react";
 import AppProviders from "~/components/app-providers";
+import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
@@ -14,31 +15,19 @@ export const metadata: Metadata = {
     },
     description: env.NEXT_PUBLIC_APP_DESCRIPTION,
     openGraph: {
-        images: [
-            {
-                url: env.NEXT_PUBLIC_APP_LOGO,
-                width: 128,
-                height: 128,
-            },
-        ],
+        images: [{ url: env.NEXT_PUBLIC_APP_LOGO, width: 128, height: 128 }],
     },
-    twitter: {
-        card: "summary",
-    },
+    twitter: { card: "summary" },
     icons: [{ rel: "icon", url: env.NEXT_PUBLIC_APP_LOGO }],
 };
-export const viewport: Viewport = {
-    themeColor: "#E6E6E6",
-};
+export const viewport: Viewport = { themeColor: "#E6E6E6" };
 
 /**
  * The primary layout for this app.
  */
 const RootLayout = ({
     children,
-}: Readonly<{
-    children: ReactNode;
-}>): ReactElement => (
+}: Readonly<{ children: ReactNode }>): ReactElement => (
     <html
         lang="en"
         className={cn(
@@ -53,6 +42,7 @@ const RootLayout = ({
         >
             <AppProviders>
                 <div className="min-h-screen px-7 pb-5 max-w-(--breakpoint-xl) mx-auto flex flex-col gap-5">
+                    <HeroPattern />
                     <Navbar />
                     {children}
                 </div>
