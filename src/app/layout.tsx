@@ -2,6 +2,7 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 import type { ReactElement, ReactNode } from "react";
 import AppProviders from "~/components/app-providers";
+import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";
 import { env } from "~/env";
@@ -45,6 +46,7 @@ const RootLayout = ({
                     <HeroPattern />
                     <Navbar />
                     {children}
+                    <Footer />
                 </div>
             </AppProviders>
         </body>

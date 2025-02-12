@@ -29,7 +29,7 @@ const PaginationControls = ({
     onRowsPerPageChange,
 }: PaginationControlsProps): ReactElement => {
     return (
-        <div className="w-full flex flex-col-reverse md:flex-row justify-between gap-2 items-center">
+        <div className="w-full flex flex-col-reverse lg:flex-row justify-between gap-3 items-center">
             {/* Left - Total Records */}
             <div className="flex gap-2 items-center text-sm text-muted-foreground">
                 Showing rows {numberWithCommas(page?.metadata.start ?? 0)} -{" "}
@@ -38,7 +38,7 @@ const PaginationControls = ({
             </div>
 
             {/* Right */}
-            <div className="flex gap-3 items-center">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 items-center">
                 {/* Rows Per Page */}
                 <SimpleCombobox
                     className="w-24"
