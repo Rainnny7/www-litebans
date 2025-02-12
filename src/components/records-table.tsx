@@ -155,7 +155,15 @@ const RecordsTable = ({
                 </div>
 
                 {/* Pagination */}
-                <PaginationControls page={records} setPage={setPage} />
+                <PaginationControls
+                    page={records}
+                    setPage={setPage}
+                    rowsPerPage={itemsPerPage}
+                    onRowsPerPageChange={(value: string) => {
+                        setItemsPerPage(parseInt(value));
+                        setPage(1);
+                    }}
+                />
             </div>
         </div>
     );
