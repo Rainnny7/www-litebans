@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { DateTime } from "luxon";
 import Image from "next/image";
-import { type ChangeEvent, type ReactElement, useMemo, useState } from "react";
+import { type ChangeEvent, type ReactElement, useState } from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
 import { fetchRecords } from "~/actions/fetch-records";
@@ -38,7 +38,7 @@ import {
     TableHeader,
     TableRow,
 } from "~/components/ui/table";
-import { Paginator } from "~/lib/paginator";
+import { type Page, Paginator } from "~/lib/paginator";
 import { formatMinecraftString, truncateText } from "~/lib/string";
 import { cn, numberWithCommas } from "~/lib/utils";
 import { type PunishmentCategoryInfo } from "~/types/punishment-category";
@@ -60,47 +60,49 @@ const RecordsTable = ({
 }): ReactElement => {
     const [page, setPage] = useState<number>(initialPage);
     const [search, setSearch] = useState<string>("");
+    const [paginator] = useState(() => new Paginator<BasePunishmentRecord>());
 
-    const { data: records = [], isLoading: isLoadingRecords } = useQuery({
-        queryKey: ["records", category.id, search],
-        queryFn: () => fetchRecords(category.id, { search }),
+    const {
+        data: records,
+        isLoading,
+        isFetching,
+    } = useQuery<Page<TablePunishmentRecord>>({
+        queryKey: ["records", page, category.id, search],
+        queryFn: async () => {
+            const records = await fetchRecords(category.id, {
+                search,
+                offset: (page - 1) * ITEMS_PER_PAGE,
+                limit: ITEMS_PER_PAGE,
+            });
+            paginator
+                .setItemsPerPage(ITEMS_PER_PAGE)
+                .setTotalItems(records.total ?? 0);
+            return await paginator.getPage(
+                page,
+                async () =>
+                    await Promise.all(
+                        records.records.map(async (record) => {
+                            if (record.uuid === "CONSOLE") {
+                                return { ...record, player: undefined };
+                            }
+                            try {
+                                const player = await getPlayer(record.uuid);
+                                return {
+                                    ...record,
+                                    player: {
+                                        username: player.username,
+                                        avatar: player.skin.parts.HEAD,
+                                    },
+                                };
+                            } catch {
+                                return { ...record, player: undefined };
+                            }
+                        })
+                    )
+            );
+        },
+        placeholderData: (prev) => prev,
     });
-
-    const paginator = useMemo(() => {
-        return new Paginator<BasePunishmentRecord>()
-            .setItemsPerPage(ITEMS_PER_PAGE)
-            .setItems(records)
-            .setTotalItems(records.length);
-    }, [records]);
-
-    const { data: enhancedRecords = [], isLoading: isLoadingPlayers } =
-        useQuery({
-            queryKey: ["players", category.id, page],
-            queryFn: async () => {
-                return Promise.all(
-                    paginator.getPage(page).items.map(async (record) => {
-                        if (record.uuid === "CONSOLE") {
-                            return { ...record, player: undefined };
-                        }
-                        try {
-                            const player = await getPlayer(record.uuid);
-                            return {
-                                ...record,
-                                player: {
-                                    username: player.username,
-                                    avatar: player.skin.parts.HEAD,
-                                },
-                            };
-                        } catch {
-                            return { ...record, player: undefined };
-                        }
-                    })
-                );
-            },
-            enabled: records.length > 0,
-        });
-
-    const isLoading: boolean = isLoadingRecords || isLoadingPlayers;
 
     return (
         <div className="flex flex-col gap-3">
@@ -141,11 +143,11 @@ const RecordsTable = ({
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {isLoading
+                                    {isLoading || isFetching
                                         ? [...Array(ITEMS_PER_PAGE)].map(
                                               (_, i) => <SkeletonRow key={i} />
                                           )
-                                        : enhancedRecords.map((record: any) => (
+                                        : records?.items.map((record) => (
                                               <RecordRow
                                                   key={record.id}
                                                   record={record}
@@ -162,15 +164,9 @@ const RecordsTable = ({
                     {/* Total Records */}
                     <div className="flex gap-2 items-center text-sm text-muted-foreground">
                         Showing rows{" "}
-                        {numberWithCommas(
-                            paginator.getPage(page).metadata.start
-                        )}{" "}
-                        -{" "}
-                        {numberWithCommas(paginator.getPage(page).metadata.end)}{" "}
-                        of{" "}
-                        {numberWithCommas(
-                            paginator.getPage(page).metadata.totalItems
-                        )}{" "}
+                        {records ? numberWithCommas(records.metadata.start) : 0}{" "}
+                        - {records ? numberWithCommas(records.metadata.end) : 0}{" "}
+                        of {numberWithCommas(records?.metadata.totalItems ?? 0)}{" "}
                         records
                     </div>
 
@@ -217,8 +213,7 @@ const RecordsTable = ({
                                     >
                                         Page {numberWithCommas(page)} of{" "}
                                         {numberWithCommas(
-                                            paginator.getPage(page).metadata
-                                                .totalPages
+                                            records?.metadata.totalPages ?? 1
                                         )}
                                     </PaginationLink>
                                 </PaginationItem>
@@ -228,15 +223,15 @@ const RecordsTable = ({
                                     <PaginationLink
                                         className={cn(
                                             page >=
-                                                paginator.getPage(page).metadata
-                                                    .totalPages &&
+                                                (records?.metadata.totalPages ??
+                                                    1) &&
                                                 "opacity-50 cursor-not-allowed"
                                         )}
                                         onClick={() => {
                                             if (
+                                                records &&
                                                 page <
-                                                paginator.getPage(page).metadata
-                                                    .totalPages
+                                                    records.metadata.totalPages
                                             ) {
                                                 setPage(page + 1);
                                             }
@@ -251,14 +246,14 @@ const RecordsTable = ({
                                     <PaginationLink
                                         className={cn(
                                             page >=
-                                                paginator.getPage(page).metadata
-                                                    .totalPages &&
+                                                (records?.metadata.totalPages ??
+                                                    1) &&
                                                 "opacity-50 cursor-not-allowed"
                                         )}
                                         onClick={() =>
                                             setPage(
-                                                paginator.getPage(page).metadata
-                                                    .totalPages
+                                                records?.metadata.totalPages ??
+                                                    1
                                             )
                                         }
                                     >

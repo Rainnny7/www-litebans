@@ -1,13 +1,15 @@
 "use server";
 
-import { desc } from "drizzle-orm";
+import { count, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { db } from "~/server/drizzle";
 import { getPunishmentCategory } from "~/types/punishment-category";
 import { type BasePunishmentRecord } from "~/types/punishment-record";
 
-type FetchRecordsOptions = {
-    search?: string;
+type FetchRecordsOptions = { search?: string; offset: number; limit: number };
+export type FetchRecordsResponse = {
+    records: BasePunishmentRecord[];
+    total: number;
 };
 
 /**
@@ -19,19 +21,30 @@ type FetchRecordsOptions = {
  */
 export const fetchRecords = async (
     categoryId: string,
-    options: FetchRecordsOptions = {}
-): Promise<BasePunishmentRecord[]> => {
+    options: FetchRecordsOptions = { offset: 0, limit: 10 }
+): Promise<FetchRecordsResponse> => {
     // Ensure the category exists first
     const category = getPunishmentCategory(categoryId);
     if (!category) {
         notFound();
     }
-    // If so, build the query
-    const query = db.select().from(category.table);
-    if (options.search) {
-        // TODO: Implement search
-    }
-    return (await query.orderBy(
-        desc(category.table.time)
-    )) as BasePunishmentRecord[];
+
+    // Fetch the total count and the records
+    const before: number = Date.now();
+    const [totalCount, records] = await Promise.all([
+        db.select({ count: count() }).from(category.table),
+        db
+            .select()
+            .from(category.table)
+            .orderBy(desc(category.table.time))
+            .offset(options.offset)
+            .limit(options.limit),
+    ]);
+    const totalRecords: number = totalCount.at(0)?.count ?? 0;
+
+    console.log(
+        `Took ${Date.now() - before}ms to fetch ${totalRecords} records`
+    );
+
+    return { records: records as BasePunishmentRecord[], total: totalRecords };
 };

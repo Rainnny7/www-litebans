@@ -1,5 +1,7 @@
 import { PageMetadata } from "~/types/page-metadata";
 
+type FetchItemsFunction<T> = (fetchItems: FetchItems) => Promise<T[]>;
+
 export class Paginator<T> {
     private itemsPerPage = 0;
     private totalItems = 0;
@@ -42,7 +44,7 @@ export class Paginator<T> {
      * @returns A promise resolving to the page of items.
      * @throws throws an error if the page number is invalid.
      */
-    getPage(page: number): Page<T> {
+    async getPage(page: number, fetchItems?: FetchItemsFunction<T>): Promise<Page<T>> {
         const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
         if (totalPages === 0) {
             return new Page<T>(
@@ -62,8 +64,12 @@ export class Paginator<T> {
         // Use set items if they are present, otherwise use fetchItems callback
         if (this.items) {
             pageItems = this.items.slice(start, end);
+        } else if (fetchItems) {
+            pageItems = await fetchItems(new FetchItems(start, end));
         } else {
-            throw new Error("Items list is not set");
+            throw new Error(
+                "Items function is not set and no fetchItems callback provided"
+            );
         }
 
         return new Page<T>(
@@ -80,6 +86,16 @@ export class Paginator<T> {
     }
 }
 
+class FetchItems {
+    readonly start: number;
+    readonly end: number;
+
+    constructor(start: number, end: number) {
+        this.start = start;
+        this.end = end;
+    }
+}
+
 export class Page<T> {
     readonly items: T[];
     readonly metadata: PageMetadata;
@@ -93,9 +109,6 @@ export class Page<T> {
      * Converts the page to a JSON object.
      */
     toJSON() {
-        return {
-            items: this.items,
-            metadata: this.metadata,
-        };
+        return { items: this.items, metadata: this.metadata };
     }
 }
