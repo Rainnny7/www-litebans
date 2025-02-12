@@ -21,6 +21,7 @@ const Navbar = async (): Promise<ReactElement> => {
                 <Link
                     className="flex gap-4 items-center hover:opacity-75 transition-all transform-gpu"
                     href="/"
+                    draggable={false}
                 >
                     <Image
                         src={env.NEXT_PUBLIC_APP_LOGO}
@@ -46,6 +47,7 @@ const Navbar = async (): Promise<ReactElement> => {
                                     key={category.type}
                                     className="px-2.5 py-1 flex gap-2 items-center bg-muted/40 text-sm rounded-lg hover:opacity-75 transition-all transform-gpu"
                                     href={`/records/${category.type}`}
+                                    draggable={false}
                                 >
                                     <span>{category.displayName}s</span>
                                     <Badge

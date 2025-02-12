@@ -8,6 +8,7 @@ const Footer = (): ReactElement => (
             className="ml-1 text-red-400 hover:opacity-75 transition-all transform-gpu"
             href="https://github.com/Rainnny7"
             target="_blank"
+            draggable={false}
         >
             Rainnny
         </Link>

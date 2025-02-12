@@ -23,7 +23,7 @@ export const checkDiscordRole = async ({
     // Get the Discord access token for the user, if any.
     const accessTokens = await client.users.getUserOauthAccessToken(
         userId,
-        "oauth_discord"
+        "discord"
     );
     if (!accessTokens || accessTokens.totalCount < 1) {
         return false;
