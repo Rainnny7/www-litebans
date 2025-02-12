@@ -34,6 +34,7 @@
         "luxon": "^3.5.0",
         "mysql2": "^3.12.0",
         "next": "^15.1.7",
+        "posthog-js": "^1.217.1",
         "react": "^18.3.1",
         "react-day-picker": "^8.10.1",
         "react-dom": "^18.3.1",
