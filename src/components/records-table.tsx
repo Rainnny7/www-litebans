@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { type ChangeEvent, type ReactElement, useState } from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
@@ -44,11 +45,19 @@ const RecordsTable = ({
     category: PunishmentCategoryInfo & { id: string };
     page: number;
 }): ReactElement => {
+    const router = useRouter();
+
     // State management
     const [search, setSearch] = useState<string>("");
     const [itemsPerPage, setItemsPerPage] = useState<number>(10);
     const [page, setPage] = useState<number>(initialPage);
     const [paginator] = useState(() => new Paginator<BasePunishmentRecord>());
+
+    // Update the URL params when page changes
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+        router.replace(`?page=${newPage}`);
+    };
 
     // Fetch the records based on the current page and search query
     const {
@@ -157,11 +166,11 @@ const RecordsTable = ({
                 {/* Pagination */}
                 <PaginationControls
                     page={records}
-                    setPage={setPage}
+                    setPage={handlePageChange}
                     rowsPerPage={itemsPerPage}
                     onRowsPerPageChange={(value: string) => {
                         setItemsPerPage(parseInt(value));
-                        setPage(1);
+                        handlePageChange(1);
                     }}
                 />
             </div>
