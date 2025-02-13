@@ -38,9 +38,9 @@ export const env = createEnv({
         NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
         NEXT_PUBLIC_APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
         NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
-        NEXT_PUBLIC_BUILD_ID: process.env.GIT_REV ?? "dev",
+        NEXT_PUBLIC_BUILD_ID: "test",
         NEXT_PUBLIC_BUILD_TIME: DateTime.now().toLocaleString(
-            DateTime.DATETIME_SHORT_WITH_SECONDS
+            DateTime.DATETIME_SHORT
         ),
 
         // Clerk
