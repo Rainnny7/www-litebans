@@ -86,7 +86,7 @@ const spriteSets: Record<SpriteName, number[][]> = {
 };
 
 export default function OnekoKitty() {
-    const showKitty = !useIsMobile(ScreenSize.Small);
+    const showKitty = !useIsMobile(ScreenSize.Large);
     const nekoElRef = useRef<HTMLDivElement | null>(null);
 
     function init() {
