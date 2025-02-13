@@ -4,7 +4,7 @@ import Code from "~/components/code";
 import { env } from "~/env";
 
 const Footer = (): ReactElement => (
-    <footer className="mt-auto pt-5 flex flex-col justify-center gap-1.5 items-center text-sm opacity-75">
+    <footer className="mt-auto pt-5 flex flex-col justify-center gap-2 items-center text-sm opacity-75">
         {/* Credits */}
         <div>
             Made with <span className="animate-pulse">❤️</span> by{" "}
