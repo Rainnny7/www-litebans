@@ -90,35 +90,53 @@ export default function OnekoKitty() {
     const nekoElRef = useRef<HTMLDivElement | null>(null);
 
     function init() {
-        const nekoEl = document.createElement("div");
-        nekoElRef.current = nekoEl;
-        nekoEl.id = "oneko";
-        nekoEl.ariaHidden = "true";
-        nekoEl.style.width = "32px";
-        nekoEl.style.height = "32px";
-        nekoEl.style.position = "fixed";
-        nekoEl.style.pointerEvents = "none";
-        nekoEl.style.imageRendering = "pixelated";
+        // Get initial mouse position from current cursor location
+        const initialMousePos = { x: 0, y: 0 };
+        const mouseEvent = (e: MouseEvent) => {
+            initialMousePos.x = e.clientX;
+            initialMousePos.y = e.clientY;
+            document.removeEventListener("mousemove", mouseEvent);
+            createKitty();
+        };
+        document.addEventListener("mousemove", mouseEvent);
 
-        nekoEl.style.left = `${nekoPosX - 16}px`;
-        nekoEl.style.top = `${nekoPosY - 16}px`;
-        nekoEl.style.zIndex = "2147483647";
+        function createKitty() {
+            const nekoEl = document.createElement("div");
+            nekoElRef.current = nekoEl;
+            nekoEl.id = "oneko";
+            nekoEl.ariaHidden = "true";
+            nekoEl.style.width = "32px";
+            nekoEl.style.height = "32px";
+            nekoEl.style.position = "fixed";
+            nekoEl.style.pointerEvents = "none";
+            nekoEl.style.imageRendering = "pixelated";
 
-        let nekoFile = "/media/oneko.gif";
-        const curScript = document.currentScript;
-        if (curScript?.dataset.cat) {
-            nekoFile = curScript.dataset.cat;
+            // Initialize position at mouse coordinates
+            nekoPosX = initialMousePos.x;
+            nekoPosY = initialMousePos.y;
+            mousePosX = initialMousePos.x;
+            mousePosY = initialMousePos.y;
+
+            nekoEl.style.left = `${nekoPosX - 16}px`;
+            nekoEl.style.top = `${nekoPosY - 16}px`;
+            nekoEl.style.zIndex = "2147483647";
+
+            let nekoFile = "/media/oneko.gif";
+            const curScript = document.currentScript;
+            if (curScript?.dataset.cat) {
+                nekoFile = curScript.dataset.cat;
+            }
+            nekoEl.style.backgroundImage = `url(${nekoFile})`;
+
+            document.body.appendChild(nekoEl);
+
+            document.addEventListener("mousemove", function (event) {
+                mousePosX = event.clientX;
+                mousePosY = event.clientY;
+            });
+
+            window.requestAnimationFrame(onAnimationFrame);
         }
-        nekoEl.style.backgroundImage = `url(${nekoFile})`;
-
-        document.body.appendChild(nekoEl);
-
-        document.addEventListener("mousemove", function (event) {
-            mousePosX = event.clientX;
-            mousePosY = event.clientY;
-        });
-
-        window.requestAnimationFrame(onAnimationFrame);
     }
 
     useEffect(() => {
