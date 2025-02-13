@@ -5,7 +5,6 @@ import { z } from "zod";
 export const env = createEnv({
     server: {
         NODE_ENV: z.enum(["development", "test", "production"]),
-        GIT_REV: z.string(),
 
         // Clerk
         CLERK_SECRET_KEY: z.string(),
@@ -34,12 +33,12 @@ export const env = createEnv({
 
     runtimeEnv: {
         NODE_ENV: process.env.NODE_ENV,
-        GIT_REV: process.env.GIT_REV,
+
         // App
         NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
         NEXT_PUBLIC_APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
         NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
-        NEXT_PUBLIC_BUILD_ID: process.env.GIT_REV || "dev",
+        NEXT_PUBLIC_BUILD_ID: "dev",
         NEXT_PUBLIC_BUILD_TIME: DateTime.now().toLocaleString(
             DateTime.DATETIME_SHORT
         ),
