@@ -1,4 +1,7 @@
 import type { MySqlTableWithColumns } from "drizzle-orm/mysql-core";
+import type { LucideProps } from "lucide-react";
+import { Footprints, Hammer, Scroll, Speaker, VolumeOff } from "lucide-react";
+import { type ReactElement } from "react";
 import {
     banPunishmentRecords,
     kickPunishmentRecords,
@@ -13,24 +16,29 @@ export type PunishmentCategory = Record<
 
 export type PunishmentCategoryInfo = {
     displayName: string;
+    icon: ReactElement<LucideProps>;
     table: MySqlTableWithColumns<any>;
 };
 
 export const PUNISHMENT_CATEGORIES: PunishmentCategory = {
     ban: {
         displayName: "Ban",
+        icon: <Hammer />,
         table: banPunishmentRecords,
     },
     mute: {
         displayName: "Mute",
+        icon: <VolumeOff />,
         table: mutePunishmentRecords,
     },
     warning: {
         displayName: "Warn",
+        icon: <Scroll />,
         table: warningPunishmentRecords,
     },
     kick: {
         displayName: "Kick",
+        icon: <Footprints />,
         table: kickPunishmentRecords,
     },
 };

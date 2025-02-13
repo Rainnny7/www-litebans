@@ -3,7 +3,7 @@ import { currentUser, type User } from "@clerk/nextjs/server";
 import { count } from "drizzle-orm";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
-import type { ReactElement } from "react";
+import { cloneElement, type ReactElement } from "react";
 import { Badge } from "~/components/ui/badge";
 import { env } from "~/env";
 import { checkDiscordRole } from "~/lib/auth";
@@ -49,9 +49,13 @@ const Navbar = async (): Promise<ReactElement> => {
                                     href={`/records/${category.type}`}
                                     draggable={false}
                                 >
+                                    {cloneElement(category.icon, {
+                                        className: "hidden lg:flex size-3.5",
+                                    })}
+
                                     <span>{category.displayName}s</span>
                                     <Badge
-                                        className="hidden md:flex px-2 border-white/20"
+                                        className="hidden md:flex px-2"
                                         variant="outline"
                                     >
                                         {numberWithCommas(
