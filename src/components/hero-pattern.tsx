@@ -4,7 +4,7 @@ import { GridPattern } from "~/components/ui/grid-pattern";
 const HeroPattern = (): ReactElement => (
     <div className="pointer-events-none absolute inset-0 mx-0 max-w-none overflow-hidden">
         <div className="absolute left-1/2 top-0 ml-[-38rem] h-[25rem] w-[81.25rem] dark:[mask-image:linear-gradient(white,transparent)]">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FFAA00] to-[#F27C00] opacity-10 [mask-image:radial-gradient(farthest-side_at_top,white,transparent)] dark:from-[#FFAA00]/30 dark:to-[#F27C00]/30 dark:opacity-100">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FFAA00] to-[#F27C00] opacity-15 [mask-image:radial-gradient(farthest-side_at_top,white,transparent)] dark:from-[#FFAA00]/30 dark:to-[#F27C00]/30 dark:opacity-100">
                 <GridPattern
                     width={72}
                     height={56}

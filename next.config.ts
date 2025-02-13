@@ -17,6 +17,9 @@ const config: NextConfig = {
     images: { unoptimized: true },
     eslint: { ignoreDuringBuilds: true },
     typescript: { ignoreBuildErrors: true },
-    experimental: { reactCompiler: true },
+    experimental: {
+        reactCompiler: true,
+        authInterrupts: true,
+    },
 };
 export default config;

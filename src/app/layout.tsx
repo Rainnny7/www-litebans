@@ -5,6 +5,7 @@ import AppProviders from "~/components/app-providers";
 import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";
+import OnekoKitty from "~/components/oneko-kitty";
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
 import "~/styles/globals.css";
@@ -43,6 +44,7 @@ const RootLayout = ({
         >
             <AppProviders>
                 <div className="min-h-screen px-7 pb-5 max-w-(--breakpoint-xl) mx-auto flex flex-col gap-5">
+                    <OnekoKitty />
                     <HeroPattern />
                     <Navbar />
                     {children}

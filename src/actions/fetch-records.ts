@@ -1,7 +1,9 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { count, desc } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { forbidden, notFound } from "next/navigation";
+import { checkDiscordRole } from "~/lib/auth";
 import { db } from "~/server/drizzle";
 import { getPunishmentCategory } from "~/types/punishment-category";
 import { type BasePunishmentRecord } from "~/types/punishment-record";
@@ -23,6 +25,11 @@ export const fetchRecords = async (
     categoryId: string,
     options: FetchRecordsOptions
 ): Promise<FetchRecordsResponse> => {
+    const { userId } = await auth();
+    if (!userId || !(await checkDiscordRole({ userId }))) {
+        forbidden();
+    }
+
     // Ensure the category exists first
     const category = getPunishmentCategory(categoryId);
     if (!category) {
