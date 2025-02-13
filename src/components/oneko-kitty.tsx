@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { ScreenSize, useIsMobile } from "~/hooks/use-mobile";
 
 type SpriteName =
     | "idle"
@@ -85,7 +86,7 @@ const spriteSets: Record<SpriteName, number[][]> = {
 };
 
 export default function OnekoKitty() {
-    const showKitty = true;
+    const showKitty = !useIsMobile(ScreenSize.Small);
     const nekoElRef = useRef<HTMLDivElement | null>(null);
 
     function init() {
