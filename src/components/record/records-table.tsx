@@ -2,7 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
-import { type ChangeEvent, type ReactElement, useState } from "react";
+import {
+    type ChangeEvent,
+    cloneElement,
+    type ReactElement,
+    useState,
+} from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
 import PaginationControls from "~/components/pagination-controls";
@@ -93,7 +98,10 @@ const RecordsTable = ({
     return (
         <div className="flex flex-col gap-3">
             {/* Header */}
-            <h1 className="text-xl font-bold">
+            <h1 className="flex items-center gap-2 text-xl font-bold">
+                {cloneElement(category.icon, {
+                    className: "size-5",
+                })}
                 {category.displayName} Records
             </h1>
 
