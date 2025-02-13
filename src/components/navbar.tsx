@@ -30,7 +30,7 @@ const Navbar = async (): Promise<ReactElement> => {
                         height={40}
                         draggable={false}
                     />
-                    <h1 className="hidden lg:flex text-xl font-semibold">
+                    <h1 className="hidden lg:flex text-xl font-bold">
                         {env.NEXT_PUBLIC_APP_NAME}
                     </h1>
                 </Link>

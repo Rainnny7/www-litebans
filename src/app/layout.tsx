@@ -1,5 +1,6 @@
-import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
+import { type NextFont } from "next/dist/compiled/@next/font";
+import localFont from "next/font/local";
 import type { ReactElement, ReactNode } from "react";
 import { cn } from "~/common/utils";
 import AppProviders from "~/components/app-providers";
@@ -25,6 +26,10 @@ export const metadata: Metadata = {
 };
 export const viewport: Viewport = { themeColor: "#E6E6E6" };
 
+const satoshi: NextFont = localFont({
+    src: "../font/Satoshi.ttf",
+});
+
 /**
  * The primary layout for this app.
  */
@@ -34,7 +39,7 @@ const RootLayout = ({
     <html
         lang="en"
         className={cn(
-            `${GeistSans.variable} scroll-smooth antialiased select-none`
+            `${satoshi.className} scroll-smooth antialiased select-none`
         )}
     >
         <body
