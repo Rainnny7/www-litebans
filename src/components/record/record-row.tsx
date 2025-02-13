@@ -3,7 +3,6 @@ import { type ReactElement } from "react";
 import PlayerAvatar from "~/components/player-avatar";
 import RecordDialog from "~/components/record/record-dialog";
 import SimpleTooltip from "~/components/simple-tooltip";
-import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { TableCell, TableRow } from "~/components/ui/table";
 import { CONSOLE_AVATAR, STEVE_AVATAR } from "~/lib/player";
 import { formatMinecraftString, truncateText } from "~/lib/string";
@@ -23,8 +22,9 @@ const RecordRow = ({
               )
             : "No reason specified";
     return (
-        <Dialog>
-            <DialogTrigger asChild>
+        <RecordDialog
+            record={record}
+            trigger={
                 <TableRow className="cursor-pointer">
                     <TableCell className="hidden md:table-cell text-zinc-300/75">
                         {numberWithCommas(record.id)}
@@ -70,11 +70,8 @@ const RecordRow = ({
                         </SimpleTooltip>
                     </TableCell>
                 </TableRow>
-            </DialogTrigger>
-            <DialogContent>
-                <RecordDialog record={record} />
-            </DialogContent>
-        </Dialog>
+            }
+        />
     );
 };
 export default RecordRow;
