@@ -1,15 +1,6 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { execSync } from "child_process";
 import { DateTime } from "luxon";
 import { z } from "zod";
-
-const getGitHash = () => {
-    try {
-        return execSync("git rev-parse --short HEAD").toString().trim();
-    } catch (e) {
-        return "dev";
-    }
-};
 
 export const env = createEnv({
     server: {
@@ -47,8 +38,7 @@ export const env = createEnv({
         NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
         NEXT_PUBLIC_APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
         NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
-        NEXT_PUBLIC_BUILD_ID:
-            (process.env.NODE_ENV !== "production" && "dev.") + getGitHash(),
+        NEXT_PUBLIC_BUILD_ID: process.env.GIT_REV ?? "dev",
         NEXT_PUBLIC_BUILD_TIME: DateTime.now().toLocaleString(
             DateTime.DATETIME_SHORT_WITH_SECONDS
         ),

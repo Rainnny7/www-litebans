@@ -15,6 +15,9 @@ COPY --from=depends /usr/src/app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 
+ARG GIT_REV
+ENV GIT_REV=${GIT_REV}
+
 # App Config
 ARG NEXT_PUBLIC_APP_NAME
 ENV NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
@@ -69,6 +72,8 @@ COPY --from=builder --chown=nextjs:nextjs /usr/src/app/next.config.ts ./next.con
 COPY --from=builder --chown=nextjs:nextjs /usr/src/app/package.json ./package.json
 
 ENV NODE_ENV=production
+ARG GIT_REV
+ENV GIT_REV=${GIT_REV}
 
 # App Config
 ARG NEXT_PUBLIC_APP_NAME
