@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { type ReactNode } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
@@ -46,7 +47,18 @@ export const removeObjectFields = <T extends Record<string, unknown>>(
  * @param text the text to copy
  * @param toastText the text to display in the toast
  */
-export const copyWithToast = async (text: string, toastText: string) => {
+export const copyWithToast = async (
+    text: string,
+    toastText: string | ReactNode
+) => {
     await navigator.clipboard.writeText(text);
-    toast.success(toastText);
+    toast.success(toastText, {
+        description: text,
+        action: {
+            label: "Got It",
+            onClick: () => {
+                /**/
+            },
+        },
+    });
 };

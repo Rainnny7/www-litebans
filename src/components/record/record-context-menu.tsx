@@ -23,10 +23,7 @@ const RecordContextMenu = ({ record, children }: RecordContextMenuProps) => {
             <ContextMenuContent>
                 <ContextMenuItem
                     onClick={async () =>
-                        copyWithToast(
-                            playerName,
-                            `Copied Player Name: ${playerName}`
-                        )
+                        copyWithToast(playerName, `Copied Player Name`)
                     }
                 >
                     <IdCard />
@@ -34,10 +31,7 @@ const RecordContextMenu = ({ record, children }: RecordContextMenuProps) => {
                 </ContextMenuItem>
                 <ContextMenuItem
                     onClick={async () =>
-                        copyWithToast(
-                            record.uuid,
-                            `Copied Player UUID: ${record.uuid}`
-                        )
+                        copyWithToast(record.uuid, `Copied Player UUID`)
                     }
                 >
                     <IdCard />
@@ -46,10 +40,7 @@ const RecordContextMenu = ({ record, children }: RecordContextMenuProps) => {
                 <ContextMenuSeparator />
                 <ContextMenuItem
                     onClick={async () =>
-                        copyWithToast(
-                            record.id.toString(),
-                            `Copied Record ID: #${record.id}`
-                        )
+                        copyWithToast(record.id.toString(), `Copied Record ID`)
                     }
                 >
                     <IdCard />
