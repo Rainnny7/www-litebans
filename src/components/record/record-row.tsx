@@ -57,7 +57,7 @@ const RecordRow = ({
                         <SimpleTooltip
                             content={<span>{colorReason(false)}</span>}
                         >
-                            <div>{colorReason(true)}</div>
+                            <div className="w-fit">{colorReason(true)}</div>
                         </SimpleTooltip>
                     </TableCell>
                     <TableCell>
@@ -66,7 +66,9 @@ const RecordRow = ({
                                 DateTime.DATETIME_MED
                             )}
                         >
-                            <div>{recordIssued.toRelative()}</div>
+                            <div className="w-fit">
+                                {recordIssued.toRelative()}
+                            </div>
                         </SimpleTooltip>
                     </TableCell>
                 </TableRow>
