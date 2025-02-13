@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { type ReactElement } from "react";
-import { STEVE_AVATAR } from "~/lib/player";
-import { cn } from "~/lib/utils";
+import { STEVE_AVATAR } from "~/common/player";
+import { cn } from "~/common/utils";
 
 const PlayerAvatar = ({
     avatar,

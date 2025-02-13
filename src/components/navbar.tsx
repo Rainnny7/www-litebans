@@ -4,10 +4,10 @@ import { count } from "drizzle-orm";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
 import { cloneElement, type ReactElement } from "react";
+import { checkDiscordRole } from "~/common/auth";
+import { numberWithCommas } from "~/common/utils";
 import { Badge } from "~/components/ui/badge";
 import { env } from "~/env";
-import { checkDiscordRole } from "~/lib/auth";
-import { numberWithCommas } from "~/lib/utils";
 import { db } from "~/server/drizzle";
 import { getAllPunishmentCategories } from "~/types/punishment-category";
 

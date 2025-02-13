@@ -10,6 +10,8 @@ import {
 } from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
+import { type Page } from "~/common/paginator";
+import api from "~/common/request";
 import PaginationControls from "~/components/pagination-controls";
 import PlayerAvatar from "~/components/player-avatar";
 import RecordRow from "~/components/record/record-row";
@@ -23,8 +25,6 @@ import {
     TableHeader,
     TableRow,
 } from "~/components/ui/table";
-import { type Page } from "~/lib/paginator";
-import api from "~/lib/request";
 import { type PunishmentCategoryInfo } from "~/types/punishment-category";
 import {
     type BasePunishmentRecord,

@@ -1,15 +1,15 @@
 import { Info } from "lucide-react";
 import { DateTime } from "luxon";
 import { type ReactElement } from "react";
+import { CONSOLE_AVATAR, STEVE_AVATAR } from "~/common/player";
+import { formatMinecraftString, truncateText } from "~/common/string";
+import { numberWithCommas } from "~/common/utils";
 import PlayerAvatar from "~/components/player-avatar";
 import RecordContextMenu from "~/components/record/record-context-menu";
 import RecordDialog from "~/components/record/record-dialog";
 import SimpleTooltip from "~/components/simple-tooltip";
 import { Button } from "~/components/ui/button";
 import { TableCell, TableRow } from "~/components/ui/table";
-import { CONSOLE_AVATAR, STEVE_AVATAR } from "~/lib/player";
-import { formatMinecraftString, truncateText } from "~/lib/string";
-import { numberWithCommas } from "~/lib/utils";
 import { type TablePunishmentRecord } from "~/types/punishment-record";
 
 const RecordRow = ({

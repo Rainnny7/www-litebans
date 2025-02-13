@@ -2,7 +2,7 @@ import type { ClerkMiddlewareAuth } from "@clerk/nextjs/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { checkDiscordRole } from "~/lib/auth";
+import { checkDiscordRole } from "~/common/auth";
 
 const isForbiddenRoute = createRouteMatcher(["/forbidden"]);
 

@@ -1,5 +1,5 @@
 import { type CachedPlayer, getPlayer } from "restfulmc-lib";
-import { AppCache, fetchWithCache } from "~/lib/cache";
+import { AppCache, fetchWithCache } from "~/common/cache";
 import { type TablePlayerData } from "~/types/punishment-record";
 
 export const STEVE_AVATAR = "https://api.restfulmc.cc/player/head/Steve.png";

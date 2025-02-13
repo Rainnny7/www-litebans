@@ -2,9 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 import { count, desc, eq, or } from "drizzle-orm";
 import { forbidden, notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
-import { checkDiscordRole } from "~/lib/auth";
-import { Paginator } from "~/lib/paginator";
-import { fetchPlayerData } from "~/lib/player";
+import { checkDiscordRole } from "~/common/auth";
+import { Paginator } from "~/common/paginator";
+import { fetchPlayerData } from "~/common/player";
 import { db } from "~/server/drizzle";
 import { getPunishmentCategory } from "~/types/punishment-category";
 import {

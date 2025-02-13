@@ -1,8 +1,8 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactElement } from "react";
+import { removeObjectFields } from "~/common/utils";
 import RecordsTable from "~/components/record/records-table";
-import { removeObjectFields } from "~/lib/utils";
 import {
     getPunishmentCategory,
     type PunishmentCategoryInfo,

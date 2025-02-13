@@ -1,6 +1,7 @@
 import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 import type { ReactElement, ReactNode } from "react";
+import { cn } from "~/common/utils";
 import AppProviders from "~/components/app-providers";
 import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
@@ -8,7 +9,6 @@ import Navbar from "~/components/navbar";
 import OnekoKitty from "~/components/oneko-kitty";
 import { Toaster } from "~/components/ui/sonner";
 import { env } from "~/env";
-import { cn } from "~/lib/utils";
 import "~/styles/globals.css";
 
 export const metadata: Metadata = {

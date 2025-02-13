@@ -5,6 +5,8 @@ import {
     ChevronsRight,
 } from "lucide-react";
 import { type ReactElement } from "react";
+import { type Page } from "~/common/paginator";
+import { cn, numberWithCommas } from "~/common/utils";
 import SimpleCombobox from "~/components/simple-combobox";
 import {
     Pagination,
@@ -12,8 +14,6 @@ import {
     PaginationItem,
     PaginationLink,
 } from "~/components/ui/pagination";
-import { type Page } from "~/lib/paginator";
-import { cn, numberWithCommas } from "~/lib/utils";
 
 type PaginationControlsProps = {
     page: Page<any> | undefined;

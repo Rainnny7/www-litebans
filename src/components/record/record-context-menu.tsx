@@ -1,5 +1,6 @@
 import { IdCard } from "lucide-react";
 import { type ReactNode } from "react";
+import { copyWithToast } from "~/common/utils";
 import {
     ContextMenu,
     ContextMenuContent,
@@ -7,7 +8,6 @@ import {
     ContextMenuSeparator,
     ContextMenuTrigger,
 } from "~/components/ui/context-menu";
-import { copyWithToast } from "~/lib/utils";
 import { type TablePunishmentRecord } from "~/types/punishment-record";
 
 type RecordContextMenuProps = {
