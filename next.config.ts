@@ -9,11 +9,11 @@ const config: NextConfig = {
     output: "standalone",
     reactStrictMode: true,
     poweredByHeader: false,
-    logging: {
-        fetches: {
-            fullUrl: true,
-        },
-    },
+    // logging: {
+    //     fetches: {
+    //         fullUrl: true,
+    //     },
+    // },
     images: { unoptimized: true },
     eslint: { ignoreDuringBuilds: true },
     typescript: { ignoreBuildErrors: true },

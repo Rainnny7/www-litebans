@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { type ChangeEvent, type ReactElement, useState } from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
-import { fetchRecords } from "~/actions/fetch-records";
 import PaginationControls from "~/components/pagination-controls";
 import SimpleTooltip from "~/components/simple-tooltip";
 import {
@@ -28,8 +27,9 @@ import {
     TableHeader,
     TableRow,
 } from "~/components/ui/table";
-import { type Page, Paginator } from "~/lib/paginator";
-import { fetchPlayerData, STEVE_AVATAR } from "~/lib/player";
+import { type Page } from "~/lib/paginator";
+import { STEVE_AVATAR } from "~/lib/player";
+import api from "~/lib/request";
 import { formatMinecraftString, truncateText } from "~/lib/string";
 import { cn, numberWithCommas } from "~/lib/utils";
 import { type PunishmentCategoryInfo } from "~/types/punishment-category";
@@ -51,12 +51,17 @@ const RecordsTable = ({
     const [search, setSearch] = useState<string>("");
     const [itemsPerPage, setItemsPerPage] = useState<number>(10);
     const [page, setPage] = useState<number>(initialPage);
-    const [paginator] = useState(() => new Paginator<BasePunishmentRecord>());
 
     // Update the URL params when page changes
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
-        router.replace(`?page=${newPage}`);
+
+        // Push new state and URL to history
+        window.history.replaceState(
+            { page: `?page=${newPage}` },
+            "",
+            `?page=${newPage}`
+        );
     };
 
     // Fetch the records based on the current page and search query
@@ -64,45 +69,17 @@ const RecordsTable = ({
         data: records,
         isLoading,
         isFetching,
-    } = useQuery<Page<TablePunishmentRecord>>({
-        queryKey: ["records", category.id, page, itemsPerPage],
-        queryFn: async () => {
-            const records = await fetchRecords(category.id, {
-                search,
-                offset: (page - 1) * itemsPerPage,
-                limit: itemsPerPage,
-            });
-            paginator
-                .setItemsPerPage(itemsPerPage)
-                .setTotalItems(records.total ?? 0);
-            return await paginator.getPage(
-                page,
-                async () =>
-                    await Promise.all(
-                        records.records.map(
-                            async (
-                                record: BasePunishmentRecord
-                            ): Promise<TablePunishmentRecord> => {
-                                const [playerData, staffData] =
-                                    await Promise.all([
-                                        fetchPlayerData(record.uuid),
-                                        record.bannedByUuid
-                                            ? fetchPlayerData(
-                                                  record.bannedByUuid
-                                              )
-                                            : Promise.resolve(undefined),
-                                    ]);
-
-                                return {
-                                    ...record,
-                                    player: playerData,
-                                    staff: staffData,
-                                };
-                            }
-                        )
-                    )
-            );
-        },
+    } = useQuery({
+        queryKey: ["records", category.id, page, itemsPerPage, search],
+        queryFn: async () =>
+            await api.get<Page<BasePunishmentRecord>>("/api/records", {
+                searchParams: {
+                    category: category.id,
+                    page,
+                    itemsPerPage,
+                    search,
+                },
+            }),
         refetchOnWindowFocus: false,
         placeholderData: (prev) => prev,
     });
@@ -160,12 +137,16 @@ const RecordsTable = ({
                                                   />
                                               )
                                           )
-                                        : records?.items.map((record) => (
-                                              <RecordRow
-                                                  key={record.id}
-                                                  record={record}
-                                              />
-                                          ))}
+                                        : records?.items.map(
+                                              (
+                                                  record: TablePunishmentRecord
+                                              ) => (
+                                                  <RecordRow
+                                                      key={record.id}
+                                                      record={record}
+                                                  />
+                                              )
+                                          )}
                                 </TableBody>
                             </Table>
                         </div>

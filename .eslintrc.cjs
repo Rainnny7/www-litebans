@@ -38,6 +38,7 @@ const config = {
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-inferrable-types": "off",
     },
 };
 module.exports = config;

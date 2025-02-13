@@ -26,7 +26,7 @@ export const PUNISHMENT_CATEGORIES: PunishmentCategory = {
         table: mutePunishmentRecords,
     },
     warning: {
-        displayName: "Warning",
+        displayName: "Warn",
         table: warningPunishmentRecords,
     },
     kick: {
