@@ -23,7 +23,7 @@ const RecordsPage = async ({
     searchParams: Promise<{ page?: number }>;
 }): Promise<ReactElement> => {
     const { slug } = await params;
-    const { page = 1 } = await searchParams;
+    const { page = 1, query = "" } = await searchParams;
 
     // Get the category from the slug and ensure it exists
     const category: PunishmentCategoryInfo | undefined =
@@ -38,6 +38,7 @@ const RecordsPage = async ({
                     "table",
                 ])}
                 page={Number(page)}
+                search={query}
             />
         </main>
     );

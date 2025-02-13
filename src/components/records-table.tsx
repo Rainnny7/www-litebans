@@ -41,14 +41,17 @@ const DEBOUNCE_TIME = 500;
 
 const RecordsTable = ({
     category,
+    search: initialSearch,
     page: initialPage,
 }: {
     category: PunishmentCategoryInfo & { id: string };
+    search: string;
     page: number;
 }): ReactElement => {
     // State management
-    const [search, setSearch] = useState<string>("");
-    const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+    const [search, setSearch] = useState<string>(initialSearch);
+    const [debouncedSearch, setDebouncedSearch] =
+        useState<string>(initialSearch);
     const [itemsPerPage, setItemsPerPage] = useState<number>(10);
     const [page, setPage] = useState<number>(initialPage);
 
