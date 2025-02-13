@@ -1,3 +1,4 @@
+import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactElement } from "react";
 import RecordsTable from "~/components/records-table";
@@ -41,4 +42,23 @@ const RecordsPage = async ({
         </main>
     );
 };
+
+export const generateMetadata = async ({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}): Promise<Metadata | undefined> => {
+    const { slug } = await params;
+    console.log({ slug });
+    if (slug) {
+        const category: PunishmentCategoryInfo | undefined =
+            getPunishmentCategory(slug);
+        if (!category) return undefined;
+        return {
+            title: `${category.displayName} Records`,
+            description: `View the ${category.displayName} records.`,
+        };
+    }
+};
+
 export default RecordsPage;
