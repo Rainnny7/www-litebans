@@ -70,7 +70,8 @@ const RecordsTable = ({
     // Update the URL params when page changes
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
-        updateUrlParams(newPage, debouncedSearch);
+        updateUrlParams(newPage, debouncedSearch); // Update the state in the URL
+        window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll back to the top
     };
 
     // Fetch the records based on the current page and debounced search query
