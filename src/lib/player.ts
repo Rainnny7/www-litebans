@@ -17,6 +17,7 @@ export const fetchPlayerData = async (
         try {
             const player: CachedPlayer = await getPlayer(uuid);
             return {
+                uuid: player.uniqueId,
                 username: player.username,
                 avatar: player.skin.parts.HEAD,
             };

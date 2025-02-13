@@ -49,7 +49,6 @@ export const generateMetadata = async ({
     params: Promise<{ slug: string }>;
 }): Promise<Metadata | undefined> => {
     const { slug } = await params;
-    console.log({ slug });
     if (slug) {
         const category: PunishmentCategoryInfo | undefined =
             getPunishmentCategory(slug);

@@ -21,4 +21,8 @@ export type TablePunishmentRecord = BasePunishmentRecord & {
     staff?: TablePlayerData | undefined;
 };
 
-export type TablePlayerData = { username: string; avatar: string };
+export type TablePlayerData = {
+    uuid: string;
+    username: string;
+    avatar: string;
+};

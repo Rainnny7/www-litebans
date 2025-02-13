@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { count, desc } from "drizzle-orm";
+import { count, desc, eq, or } from "drizzle-orm";
 import { forbidden, notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
 import { checkDiscordRole } from "~/lib/auth";
@@ -15,9 +15,12 @@ import {
 async function validateRequest(request: NextRequest) {
     // Get the request params
     const { searchParams } = new URL(request.url);
-    const categoryId = searchParams.get("category");
-    const page = Number(searchParams.get("page") ?? "1");
-    const itemsPerPage = Number(searchParams.get("itemsPerPage") ?? "10");
+    const categoryId: string | null = searchParams.get("category");
+    const page: number = Number(searchParams.get("page") ?? "1");
+    const itemsPerPage: number = Number(
+        searchParams.get("itemsPerPage") ?? "10"
+    );
+    const search: string | null = searchParams.get("search");
 
     // Ensure the user is authenticated
     const { userId } = await auth();
@@ -39,27 +42,40 @@ async function validateRequest(request: NextRequest) {
         notFound();
     }
 
-    return { categoryId, page, itemsPerPage, category };
+    return { categoryId, page, itemsPerPage, category, search };
 }
 
 async function fetchRecordsFromDatabase(
     categoryId: string,
     category: any,
     page: number,
-    itemsPerPage: number
+    itemsPerPage: number,
+    search: string | null
 ) {
-    const offset = (page - 1) * itemsPerPage;
-
     console.log(`[API::fetchRecords] Fetching ${categoryId} records...`);
-    const before = Date.now();
+    const before: number = Date.now();
 
+    // If the search query is a username
+    if (search && search.length <= 16) {
+        const player = await fetchPlayerData(search);
+        if (player) {
+            search = player.uuid;
+        }
+    }
+    const searchQuery = search
+        ? or(
+              eq(category.table.uuid, search),
+              eq(category.table.bannedByUuid, search)
+          )
+        : undefined;
     const [totalCount, records] = (await Promise.all([
-        db.select({ count: count() }).from(category.table),
+        db.select({ count: count() }).from(category.table).where(searchQuery),
         db
             .select()
             .from(category.table)
+            .where(searchQuery)
             .orderBy(desc(category.table.time))
-            .offset(offset)
+            .offset((page - 1) * itemsPerPage)
             .limit(itemsPerPage),
     ])) as [{ count: number }[], BasePunishmentRecord[]];
     const totalRecords = totalCount.at(0)?.count ?? 0;
@@ -120,12 +136,13 @@ export const GET = async (request: NextRequest) => {
     const validation = await validateRequest(request);
     if (validation instanceof Response) return validation;
 
-    const { categoryId, page, itemsPerPage, category } = validation;
+    const { categoryId, page, itemsPerPage, category, search } = validation;
     const { records, totalRecords } = await fetchRecordsFromDatabase(
         categoryId,
         category,
         page,
-        itemsPerPage
+        itemsPerPage,
+        search
     );
 
     console.log(`[API::fetchRecords] Paginating ${records.length} records...`);

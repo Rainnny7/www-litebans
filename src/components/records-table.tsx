@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { type ChangeEvent, type ReactElement, useState } from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
@@ -38,6 +37,8 @@ import {
     type TablePunishmentRecord,
 } from "~/types/punishment-record";
 
+const DEBOUNCE_TIME = 500;
+
 const RecordsTable = ({
     category,
     page: initialPage,
@@ -45,39 +46,50 @@ const RecordsTable = ({
     category: PunishmentCategoryInfo & { id: string };
     page: number;
 }): ReactElement => {
-    const router = useRouter();
-
     // State management
     const [search, setSearch] = useState<string>("");
+    const [debouncedSearch, setDebouncedSearch] = useState<string>("");
     const [itemsPerPage, setItemsPerPage] = useState<number>(10);
     const [page, setPage] = useState<number>(initialPage);
+
+    // Update the current URL params
+    const updateUrlParams = (page: number, search: string | undefined) => {
+        const params = new URLSearchParams();
+        params.set("page", page.toString());
+        if (search) {
+            params.set("query", search);
+        }
+        const url = `?${params.toString()}`;
+        window.history.replaceState({ page: url }, "", url);
+    };
+
+    // Debounce the search value
+    const debouncedSetSearch = useDebouncedCallback((value: string) => {
+        setDebouncedSearch(value);
+        handlePageChange(1);
+        updateUrlParams(1, value);
+    }, DEBOUNCE_TIME);
 
     // Update the URL params when page changes
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
-
-        // Push new state and URL to history
-        window.history.replaceState(
-            { page: `?page=${newPage}` },
-            "",
-            `?page=${newPage}`
-        );
+        updateUrlParams(newPage, debouncedSearch);
     };
 
-    // Fetch the records based on the current page and search query
+    // Fetch the records based on the current page and debounced search query
     const {
         data: records,
         isLoading,
         isFetching,
     } = useQuery({
-        queryKey: ["records", category.id, page, itemsPerPage, search],
+        queryKey: ["records", category.id, page, itemsPerPage, debouncedSearch],
         queryFn: async () =>
             await api.get<Page<BasePunishmentRecord>>("/api/records", {
                 searchParams: {
                     category: category.id,
                     page,
                     itemsPerPage,
-                    search,
+                    search: debouncedSearch,
                 },
             }),
         refetchOnWindowFocus: false,
@@ -94,7 +106,13 @@ const RecordsTable = ({
 
             {/* Filters */}
             <div className="flex justify-between items-center">
-                <SearchInput value={search} onChange={setSearch} />
+                <SearchInput
+                    value={search}
+                    onChange={(value: string) => {
+                        setSearch(value);
+                        debouncedSetSearch(value);
+                    }}
+                />
             </div>
 
             {/* Records Table */}
@@ -188,7 +206,7 @@ const SearchInput = ({
                 }
             }
         },
-        300
+        DEBOUNCE_TIME
     );
 
     return (
