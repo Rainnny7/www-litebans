@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactElement } from "react";
-import RecordsTable from "~/components/records-table";
+import RecordsTable from "~/components/record/records-table";
 import { removeObjectFields } from "~/lib/utils";
 import {
     getPunishmentCategory,
@@ -20,7 +20,7 @@ const RecordsPage = async ({
     searchParams,
 }: {
     params: Promise<{ slug: string }>;
-    searchParams: Promise<{ page?: number }>;
+    searchParams: Promise<{ page?: number; query?: string }>;
 }): Promise<ReactElement> => {
     const { slug } = await params;
     const { page = 1, query = "" } = await searchParams;

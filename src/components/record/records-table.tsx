@@ -1,21 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { DateTime } from "luxon";
-import Image from "next/image";
+import { LoaderCircle } from "lucide-react";
 import { type ChangeEvent, type ReactElement, useState } from "react";
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
 import PaginationControls from "~/components/pagination-controls";
-import SimpleTooltip from "~/components/simple-tooltip";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog";
+import PlayerAvatar from "~/components/player-avatar";
+import RecordRow from "~/components/record/record-row";
 import { Input } from "~/components/ui/input";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
@@ -27,10 +19,7 @@ import {
     TableRow,
 } from "~/components/ui/table";
 import { type Page } from "~/lib/paginator";
-import { STEVE_AVATAR } from "~/lib/player";
 import api from "~/lib/request";
-import { formatMinecraftString, truncateText } from "~/lib/string";
-import { cn, numberWithCommas } from "~/lib/utils";
 import { type PunishmentCategoryInfo } from "~/types/punishment-category";
 import {
     type BasePunishmentRecord,
@@ -197,6 +186,8 @@ const SearchInput = ({
     onChange: (value: string) => void;
 }): ReactElement => {
     const [avatar, setAvatar] = useState<string | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(false);
+
     const debouncedAvatarLookup = useDebouncedCallback(
         async (username: string) => {
             if (!username) {
@@ -208,6 +199,7 @@ const SearchInput = ({
                     setAvatar(undefined);
                 }
             }
+            setIsLoading(false);
         },
         DEBOUNCE_TIME
     );
@@ -220,6 +212,7 @@ const SearchInput = ({
                 value={value}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     const value: string = event.target.value;
+                    setIsLoading(true);
                     onChange(value);
                     void debouncedAvatarLookup(value);
                 }}
@@ -228,6 +221,9 @@ const SearchInput = ({
                 className="absolute left-2.5 top-1/2 size-5 transform -translate-y-1/2"
                 avatar={avatar}
             />
+            {isLoading ? (
+                <LoaderCircle className="absolute right-2.5 top-1/2 size-4 text-muted-foreground transform -translate-y-1/2 animate-spin" />
+            ) : null}
         </div>
     );
 };
@@ -256,87 +252,6 @@ const SkeletonRow = ({ opacity = 1 }: { opacity?: number }): ReactElement => (
             <Skeleton className="w-16 h-4" />
         </TableCell>
     </TableRow>
-);
-
-const RecordRow = ({
-    record,
-}: {
-    record: TablePunishmentRecord;
-}): ReactElement => {
-    const colorReason = (truncate: boolean) =>
-        record.reason
-            ? formatMinecraftString(
-                  truncate ? truncateText(record.reason, 52) : record.reason
-              )
-            : "No reason specified";
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <TableRow className="cursor-pointer">
-                    <TableCell className="hidden md:table-cell text-zinc-300/75">
-                        {numberWithCommas(record.id)}
-                    </TableCell>
-                    <TableCell>
-                        <div className="flex gap-3 items-center">
-                            <PlayerAvatar
-                                avatar={record.player?.avatar ?? STEVE_AVATAR}
-                            />
-                            <span className="truncate">
-                                {record.player?.username ?? "Player (Bedrock?)"}
-                            </span>
-                        </div>
-                    </TableCell>
-                    <TableCell>
-                        <div className="flex gap-3 items-center">
-                            <PlayerAvatar
-                                avatar={record.staff?.avatar ?? STEVE_AVATAR}
-                            />
-                            <span className="truncate">
-                                {record.staff?.username ?? record.bannedByName}
-                            </span>
-                        </div>
-                    </TableCell>
-                    <TableCell className="max-h-12 overflow-hidden">
-                        <SimpleTooltip
-                            content={<span>{colorReason(false)}</span>}
-                        >
-                            <div>{colorReason(true)}</div>
-                        </SimpleTooltip>
-                    </TableCell>
-                    <TableCell>
-                        {DateTime.fromMillis(record.time).toRelative()}
-                    </TableCell>
-                </TableRow>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
-    );
-};
-
-const PlayerAvatar = ({
-    avatar,
-    className,
-}: {
-    avatar: string | undefined;
-    className?: string;
-}): ReactElement => (
-    <Image
-        className={cn(className)}
-        src={avatar ?? STEVE_AVATAR}
-        alt="Player Avatar"
-        width={22}
-        height={22}
-        draggable={false}
-    />
 );
 
 export default RecordsTable;
