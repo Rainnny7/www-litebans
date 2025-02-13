@@ -1,17 +1,11 @@
 import { DateTime } from "luxon";
 import { type ReactElement } from "react";
 import PlayerAvatar from "~/components/player-avatar";
+import RecordDialog from "~/components/record/record-dialog";
 import SimpleTooltip from "~/components/simple-tooltip";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { TableCell, TableRow } from "~/components/ui/table";
-import { STEVE_AVATAR } from "~/lib/player";
+import { CONSOLE_AVATAR, STEVE_AVATAR } from "~/lib/player";
 import { formatMinecraftString, truncateText } from "~/lib/string";
 import { numberWithCommas } from "~/lib/utils";
 import { type TablePunishmentRecord } from "~/types/punishment-record";
@@ -48,7 +42,11 @@ const RecordRow = ({
                     <TableCell>
                         <div className="flex gap-3 items-center">
                             <PlayerAvatar
-                                avatar={record.staff?.avatar ?? STEVE_AVATAR}
+                                avatar={
+                                    record.bannedByUuid === "CONSOLE"
+                                        ? CONSOLE_AVATAR
+                                        : (record.staff?.avatar ?? STEVE_AVATAR)
+                                }
                             />
                             <span className="truncate">
                                 {record.staff?.username ?? record.bannedByName}
@@ -74,14 +72,7 @@ const RecordRow = ({
                 </TableRow>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
-                    </DialogDescription>
-                </DialogHeader>
+                <RecordDialog record={record} />
             </DialogContent>
         </Dialog>
     );

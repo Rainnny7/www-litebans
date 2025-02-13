@@ -90,7 +90,7 @@ async function mapPlayerData(
     records: BasePunishmentRecord[]
 ): Promise<TablePunishmentRecord[]> {
     console.log(
-        `[API::mapPlayerData] Mapping UUID -> Minecraft Account for ${records.length} records...`
+        `[API::fetchRecords] Mapping UUID -> Minecraft Account for ${records.length} records...`
     );
     const before = Date.now();
 
@@ -126,7 +126,7 @@ async function mapPlayerData(
     );
 
     console.log(
-        `[API::mapPlayerData] Took ${Date.now() - before}ms to map UUID -> Minecraft Account for ${mappedRecords.length} records`
+        `[API::fetchRecords] Took ${Date.now() - before}ms to map UUID -> Minecraft Account for ${mappedRecords.length} records`
     );
     return mappedRecords;
 }
@@ -144,20 +144,17 @@ export const GET = async (request: NextRequest) => {
         itemsPerPage,
         search
     );
-
-    console.log(`[API::fetchRecords] Paginating ${records.length} records...`);
-
-    const beforePagination: number = Date.now();
     const paginatedPage = await new Paginator<BasePunishmentRecord>()
         .setItemsPerPage(itemsPerPage)
         .setTotalItems(totalRecords)
         .getPage(page, async () => mapPlayerData(records));
 
+    const time: number = Date.now() - before;
     console.log(
-        `[API::fetchRecords] Took ${Date.now() - beforePagination}ms to paginate ${records.length} records`
+        `[API::fetchRecords] Total time spent was ${time}ms fetching records`
     );
     return Response.json({
         ...paginatedPage,
-        time: Date.now() - before,
+        time,
     });
 };

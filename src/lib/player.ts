@@ -3,6 +3,8 @@ import { AppCache, fetchWithCache } from "~/lib/cache";
 import { type TablePlayerData } from "~/types/punishment-record";
 
 export const STEVE_AVATAR = "https://api.restfulmc.cc/player/head/Steve.png";
+export const CONSOLE_AVATAR =
+    "https://api.restfulmc.cc/player/head/Console.png";
 
 const playerCache = new AppCache({
     ttl: 1000 * 60 * 60 * 24, // 24 hours
