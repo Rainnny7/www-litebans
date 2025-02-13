@@ -89,6 +89,7 @@ const RecordsTable = ({
     });
 
     // Render the table
+    const showSkeleton: boolean = isLoading || isFetching;
     return (
         <div className="flex flex-col gap-3">
             {/* Header */}
@@ -134,29 +135,34 @@ const RecordsTable = ({
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {isLoading || isFetching
-                                        ? [...Array(itemsPerPage)].map(
-                                              (_, i) => (
-                                                  <SkeletonRow
-                                                      key={i}
-                                                      opacity={
-                                                          1 -
-                                                          (i / itemsPerPage) *
-                                                              0.9
-                                                      }
-                                                  />
-                                              )
-                                          )
-                                        : records?.items.map(
-                                              (
-                                                  record: TablePunishmentRecord
-                                              ) => (
-                                                  <RecordRow
-                                                      key={record.id}
-                                                      record={record}
-                                                  />
-                                              )
-                                          )}
+                                    {showSkeleton ? (
+                                        [...Array(itemsPerPage)].map((_, i) => (
+                                            <SkeletonRow
+                                                key={i}
+                                                opacity={
+                                                    1 - (i / itemsPerPage) * 0.9
+                                                }
+                                            />
+                                        ))
+                                    ) : records?.items.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell
+                                                colSpan={5}
+                                                className="h-32 text-center text-muted-foreground"
+                                            >
+                                                No records found
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        records?.items.map(
+                                            (record: TablePunishmentRecord) => (
+                                                <RecordRow
+                                                    key={record.id}
+                                                    record={record}
+                                                />
+                                            )
+                                        )
+                                    )}
                                 </TableBody>
                             </Table>
                         </div>
