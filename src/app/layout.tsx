@@ -6,6 +6,7 @@ import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";
 import OnekoKitty from "~/components/oneko-kitty";
+import { Toaster } from "~/components/ui/sonner";
 import { env } from "~/env";
 import { cn } from "~/lib/utils";
 import "~/styles/globals.css";
@@ -43,13 +44,14 @@ const RootLayout = ({
             }}
         >
             <AppProviders>
+                <OnekoKitty />
                 <div className="min-h-screen px-7 pb-5 max-w-(--breakpoint-xl) mx-auto flex flex-col gap-5">
-                    <OnekoKitty />
                     <HeroPattern />
                     <Navbar />
                     {children}
                     <Footer />
                 </div>
+                <Toaster />
             </AppProviders>
         </body>
     </html>

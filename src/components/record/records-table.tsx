@@ -140,6 +140,9 @@ const RecordsTable = ({
                                         <TableHead className="w-40">
                                             Issued
                                         </TableHead>
+                                        <TableHead className="w-16 text-right">
+                                            Actions
+                                        </TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -155,7 +158,7 @@ const RecordsTable = ({
                                     ) : records?.items.length === 0 ? (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={5}
+                                                colSpan={6}
                                                 className="h-32 text-center text-muted-foreground"
                                             >
                                                 No records found
@@ -264,6 +267,9 @@ const SkeletonRow = ({ opacity = 1 }: { opacity?: number }): ReactElement => (
         </TableCell>
         <TableCell>
             <Skeleton className="w-16 h-4" />
+        </TableCell>
+        <TableCell className="flex justify-center">
+            <Skeleton className="w-[22px] h-[22px] rounded-sm" />
         </TableCell>
     </TableRow>
 );
