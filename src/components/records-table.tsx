@@ -149,7 +149,16 @@ const RecordsTable = ({
                                 <TableBody>
                                     {isLoading || isFetching
                                         ? [...Array(itemsPerPage)].map(
-                                              (_, i) => <SkeletonRow key={i} />
+                                              (_, i) => (
+                                                  <SkeletonRow
+                                                      key={i}
+                                                      opacity={
+                                                          1 -
+                                                          (i / itemsPerPage) *
+                                                              0.9
+                                                      }
+                                                  />
+                                              )
                                           )
                                         : records?.items.map((record) => (
                                               <RecordRow
@@ -221,8 +230,8 @@ const SearchInput = ({
     );
 };
 
-const SkeletonRow = (): ReactElement => (
-    <TableRow>
+const SkeletonRow = ({ opacity = 1 }: { opacity?: number }): ReactElement => (
+    <TableRow style={{ opacity }}>
         <TableCell className="hidden md:table-cell text-zinc-300/75">
             <Skeleton className="w-8 h-4" />
         </TableCell>

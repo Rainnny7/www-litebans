@@ -1,8 +1,8 @@
 import { UserButton } from "@clerk/nextjs";
 import { currentUser, type User } from "@clerk/nextjs/server";
 import { count } from "drizzle-orm";
+import { Link } from "next-view-transitions";
 import Image from "next/image";
-import Link from "next/link";
 import type { ReactElement } from "react";
 import { Badge } from "~/components/ui/badge";
 import { env } from "~/env";
@@ -16,7 +16,7 @@ const Navbar = async (): Promise<ReactElement> => {
     return (
         <nav className="-mx-7 px-7 py-5 flex justify-between items-center border-b border-muted">
             {/* Left */}
-            <div className="flex gap-7 lg:gap-10 items-center">
+            <div className="flex gap-4 sm:gap-7 lg:gap-10 items-center transition-all transform-gpu">
                 {/* Branding */}
                 <Link
                     className="flex gap-4 items-center hover:opacity-75 transition-all transform-gpu"
@@ -37,7 +37,7 @@ const Navbar = async (): Promise<ReactElement> => {
 
                 {/* Categories */}
                 {user && (await checkDiscordRole({ userId: user.id })) && (
-                    <div className="flex gap-3 items-center">
+                    <div className="flex gap-2 sm:gap-3 items-center transition-all transform-gpu">
                         {getAllPunishmentCategories().map(async (category) => {
                             const recordCountResult = await db
                                 .select({ count: count() })
