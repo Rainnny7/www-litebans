@@ -189,7 +189,6 @@ const RecordsTable = ({
             params.set("sortOrder", sort[0].desc ? "desc" : "asc");
         }
         const url = `?${params.toString()}`;
-        console.log({ url });
         window.history.replaceState({ page: url }, "", url);
     };
 
@@ -310,7 +309,6 @@ const RecordsTable = ({
                                         debouncedSearch,
                                         newSorting
                                     );
-                                    console.log({ newSorting });
                                 }}
                             />
                         </div>

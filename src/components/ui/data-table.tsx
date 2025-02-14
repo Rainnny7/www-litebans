@@ -93,12 +93,24 @@ export function DataTable<TData, TValue>({
                                                 <Button
                                                     className="p-1.5 h-7"
                                                     variant="ghost"
-                                                    onClick={() =>
+                                                    onClick={() => {
+                                                        const currentSortDir =
+                                                            header.column.getIsSorted();
+                                                        const newDesc =
+                                                            currentSortDir ===
+                                                            "asc";
+
                                                         header.column.toggleSorting(
-                                                            header.column.getIsSorted() ===
+                                                            currentSortDir ===
                                                                 "asc"
-                                                        )
-                                                    }
+                                                        );
+                                                        onSortingChange?.([
+                                                            {
+                                                                id: header.id,
+                                                                desc: newDesc,
+                                                            },
+                                                        ]);
+                                                    }}
                                                 >
                                                     {headerValue}
 
@@ -107,9 +119,9 @@ export function DataTable<TData, TValue>({
                                                     header.id ? (
                                                         <span>
                                                             {sorting[0].desc ? (
-                                                                <ArrowUp />
-                                                            ) : (
                                                                 <ArrowDown />
+                                                            ) : (
+                                                                <ArrowUp />
                                                             )}
                                                         </span>
                                                     ) : (
