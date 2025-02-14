@@ -16,7 +16,7 @@ const DEFAULT_OPTIONS: RequestOptions = {
     next: {
         revalidate: 120, // 2 minutes
     },
-    throwOnError: false,
+    throwOnError: true,
     returns: "json",
 };
 

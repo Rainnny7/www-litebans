@@ -1,11 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-    type ColumnDef,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import { Info, LoaderCircle } from "lucide-react";
 import { DateTime } from "luxon";
 import {
@@ -15,6 +11,7 @@ import {
     useState,
 } from "react";
 import { getPlayer } from "restfulmc-lib";
+import { toast } from "sonner";
 import { useDebouncedCallback } from "use-debounce";
 import { type Page } from "~/common/paginator";
 import { CONSOLE_AVATAR, STEVE_AVATAR } from "~/common/player";
@@ -51,18 +48,18 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
     },
     {
         accessorKey: "player",
-        // header: ({ column }) => (
-        //     <Button
-        //         className="p-1.5 h-7"
-        //         variant="ghost"
-        //         onClick={() =>
-        //             column.toggleSorting(column.getIsSorted() === "asc")
-        //         }
-        //     >
-        //         Player
-        //     </Button>
-        // ),
-        header: "Player",
+        header: ({ column }) => (
+            <Button
+                className="p-1.5 h-7"
+                variant="ghost"
+                onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === "asc")
+                }
+            >
+                Player
+            </Button>
+        ),
+        // header: "Player",
         size: 205,
         cell: ({ row }) => {
             const player: TablePlayerData | undefined = row.original.player;
@@ -205,26 +202,39 @@ const RecordsTable = ({
         data: records,
         isLoading,
         isFetching,
+        error,
     } = useQuery({
         queryKey: ["records", category.id, page, itemsPerPage, debouncedSearch],
-        queryFn: async () =>
-            await api.get<Page<BasePunishmentRecord>>("/api/records", {
-                searchParams: {
-                    category: category.id,
-                    page,
-                    itemsPerPage,
-                    search: debouncedSearch,
-                },
-            }),
+        queryFn: async () => {
+            try {
+                return await api.get<Page<BasePunishmentRecord>>(
+                    "/api/records",
+                    {
+                        searchParams: {
+                            category: category.id,
+                            page,
+                            itemsPerPage,
+                            search: debouncedSearch,
+                        },
+                    }
+                );
+            } catch (error) {
+                // If there is an error whilst fetching records, handle it and inform the user
+                const cause: string = (error as any).cause.data.error;
+                let unknown: boolean = true;
+                if (cause === "ECONNRESET") {
+                    error = new Error(cause);
+                    unknown = false;
+                }
+                toast.error(`Failed to fetch ${category.id} records`, {
+                    id: "records-fetch-error",
+                    description: unknown ? "An unknown error occurred" : cause,
+                });
+                throw error;
+            }
+        },
         refetchOnWindowFocus: false,
         placeholderData: (prev) => prev,
-    });
-
-    // Render the table
-    const table = useReactTable({
-        columns: COLUMNS,
-        data: records?.items ?? [],
-        getCoreRowModel: getCoreRowModel(),
     });
 
     return (
@@ -262,22 +272,28 @@ const RecordsTable = ({
                                 contextMenu={(row) => (
                                     <RecordContextMenu record={row.original} />
                                 )}
-                                noResultsMessage="No records were found matching your query."
+                                noResultsMessage={
+                                    error
+                                        ? "Failed to load records"
+                                        : "No records were found matching your query."
+                                }
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Pagination */}
-                <PaginationControls
-                    page={records}
-                    setPage={handlePageChange}
-                    rowsPerPage={itemsPerPage}
-                    onRowsPerPageChange={(value: string) => {
-                        setItemsPerPage(parseInt(value));
-                        handlePageChange(1);
-                    }}
-                />
+                {!error && (
+                    <PaginationControls
+                        page={records}
+                        setPage={handlePageChange}
+                        rowsPerPage={itemsPerPage}
+                        onRowsPerPageChange={(value: string) => {
+                            setItemsPerPage(parseInt(value));
+                            handlePageChange(1);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

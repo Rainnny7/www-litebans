@@ -137,24 +137,39 @@ export const GET = async (request: NextRequest) => {
     if (validation instanceof Response) return validation;
 
     const { categoryId, page, itemsPerPage, category, search } = validation;
-    const { records, totalRecords } = await fetchRecordsFromDatabase(
-        categoryId,
-        category,
-        page,
-        itemsPerPage,
-        search
-    );
-    const paginatedPage = await new Paginator<BasePunishmentRecord>()
-        .setItemsPerPage(itemsPerPage)
-        .setTotalItems(totalRecords)
-        .getPage(page, async () => mapPlayerData(records));
+    try {
+        // throw an sql error on purpose
+        const { records, totalRecords } = await fetchRecordsFromDatabase(
+            categoryId,
+            category,
+            page,
+            itemsPerPage,
+            search
+        );
+        const paginatedPage = await new Paginator<BasePunishmentRecord>()
+            .setItemsPerPage(itemsPerPage)
+            .setTotalItems(totalRecords)
+            .getPage(page, async () => mapPlayerData(records));
 
-    const time: number = Date.now() - before;
-    console.log(
-        `[API::fetchRecords] Total time spent was ${time}ms fetching records`
-    );
-    return Response.json({
-        ...paginatedPage,
-        time,
-    });
+        const time: number = Date.now() - before;
+        console.log(
+            `[API::fetchRecords] Total time spent was ${time}ms fetching records`
+        );
+        return Response.json({
+            ...paginatedPage,
+            time,
+        });
+    } catch (error) {
+        // Handle specific errors
+        const code: string = (error as any).code;
+        if (code === "ECONNRESET") {
+            return Response.json({ error: code }, { status: 500 });
+        }
+        // Handle all other errors
+        console.error("Failed to fetch records:", error);
+        return Response.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
+    }
 };
