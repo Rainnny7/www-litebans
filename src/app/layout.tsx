@@ -50,8 +50,8 @@ const RootLayout = ({
             }}
         >
             <Script
-                src="https://analytics.rainnny.club/script.js"
-                data-website-id="0d551b69-be15-47f4-8c9d-963fb182031d"
+                src={env.ANALYTICS_HOST}
+                data-website-id={env.ANALYTICS_ID}
                 defer
             />
             <AppProviders>
