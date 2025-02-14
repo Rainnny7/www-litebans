@@ -10,7 +10,7 @@ import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";
 import OnekoKitty from "~/components/oneko-kitty";
 import { Toaster } from "~/components/ui/sonner";
-import { env, isUsingAnalytics } from "~/env";
+import { env, isProd, isUsingAnalytics } from "~/env";
 import "~/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ const RootLayout = ({
                     "linear-gradient(to top, hsl(240, 6%, 10%), var(--background))",
             }}
         >
-            {isUsingAnalytics && (
+            {isProd && isUsingAnalytics && (
                 <Script
                     src={`${env.ANALYTICS_HOST}/script.js`}
                     data-website-id={env.ANALYTICS_ID}
