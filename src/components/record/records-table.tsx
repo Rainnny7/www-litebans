@@ -1,7 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { LoaderCircle } from "lucide-react";
+import {
+    type ColumnDef,
+    getCoreRowModel,
+    useReactTable,
+} from "@tanstack/react-table";
+import { Info, LoaderCircle } from "lucide-react";
+import { DateTime } from "luxon";
 import {
     type ChangeEvent,
     cloneElement,
@@ -11,26 +17,135 @@ import {
 import { getPlayer } from "restfulmc-lib";
 import { useDebouncedCallback } from "use-debounce";
 import { type Page } from "~/common/paginator";
+import { CONSOLE_AVATAR, STEVE_AVATAR } from "~/common/player";
 import api from "~/common/request";
+import { formatMinecraftString, truncateText } from "~/common/string";
+import { numberWithCommas } from "~/common/utils";
 import PaginationControls from "~/components/pagination-controls";
 import PlayerAvatar from "~/components/player-avatar";
-import RecordRow from "~/components/record/record-row";
+import RecordContextMenu from "~/components/record/record-context-menu";
+import RecordDialog from "~/components/record/record-dialog";
+import SimpleTooltip from "~/components/simple-tooltip";
+import { Button } from "~/components/ui/button";
+import { DataTable } from "~/components/ui/data-table";
 import { Input } from "~/components/ui/input";
 import { Skeleton } from "~/components/ui/skeleton";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "~/components/ui/table";
+import { TableCell, TableRow } from "~/components/ui/table";
 import { type PunishmentCategoryInfo } from "~/types/punishment-category";
 import {
     type BasePunishmentRecord,
+    type TablePlayerData,
     type TablePunishmentRecord,
 } from "~/types/punishment-record";
 
+const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
+    {
+        accessorKey: "id",
+        header: "#",
+        size: 45,
+        cell: ({ row }) => (
+            <div className="hidden md:table-cell text-zinc-300/75">
+                {numberWithCommas(row.getValue("id"))}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "player",
+        header: "Player",
+        size: 205,
+        cell: ({ row }) => {
+            const player: TablePlayerData | undefined = row.original.player;
+            return (
+                <div className="flex gap-3 items-center">
+                    <PlayerAvatar avatar={player?.avatar ?? STEVE_AVATAR} />
+                    <span className="truncate">
+                        {player?.username ?? "Player (Bedrock?)"}
+                    </span>
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: "staff",
+        header: "Staff",
+        size: 205,
+        cell: ({ row }) => {
+            const record: TablePunishmentRecord = row.original;
+            const staff: TablePlayerData | undefined = row.original.staff;
+            return (
+                <div className="flex gap-3 items-center">
+                    <PlayerAvatar
+                        avatar={
+                            record.bannedByUuid === "CONSOLE"
+                                ? CONSOLE_AVATAR
+                                : (staff?.avatar ?? STEVE_AVATAR)
+                        }
+                    />
+                    <span className="truncate">
+                        {staff?.username ?? record.bannedByName}
+                    </span>
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: "reason",
+        header: "Reason",
+        size: 250,
+        cell: ({ row }) => {
+            const reason: string = row.original.reason;
+            const colorReason = (truncate: boolean) =>
+                reason
+                    ? formatMinecraftString(
+                          truncate ? truncateText(reason, 52) : reason
+                      )
+                    : "No reason specified";
+            return (
+                <div className="max-h-12 overflow-hidden">
+                    <SimpleTooltip content={<span>{colorReason(false)}</span>}>
+                        <div className="w-fit">{colorReason(true)}</div>
+                    </SimpleTooltip>
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: "issued",
+        header: "Issued",
+        size: 110,
+        cell: ({ row }) => {
+            const issued: DateTime = DateTime.fromMillis(row.original.time);
+            return (
+                <SimpleTooltip
+                    content={issued.toLocaleString(DateTime.DATETIME_MED)}
+                >
+                    <div className="w-fit">{issued.toRelative()}</div>
+                </SimpleTooltip>
+            );
+        },
+    },
+    {
+        accessorKey: "actions",
+        header: () => <div className="text-center">Actions</div>,
+        size: 20,
+        cell: ({ row }) => (
+            <div className="flex justify-center">
+                <RecordDialog
+                    record={row.original}
+                    trigger={
+                        <Button
+                            className="size-4 cursor-pointer"
+                            variant="ghost"
+                            size="icon"
+                        >
+                            <Info className="size-2.5 text-muted-foreground hover:text-foreground transition-all transform-gpu" />
+                        </Button>
+                    }
+                />
+            </div>
+        ),
+    },
+];
 const DEBOUNCE_TIME = 500;
 
 const RecordsTable = ({
@@ -95,7 +210,12 @@ const RecordsTable = ({
     });
 
     // Render the table
-    const showSkeleton: boolean = isLoading || isFetching;
+    const table = useReactTable({
+        columns: COLUMNS,
+        data: records?.items ?? [],
+        getCoreRowModel: getCoreRowModel(),
+    });
+
     return (
         <div className="flex flex-col gap-3">
             {/* Header */}
@@ -123,60 +243,17 @@ const RecordsTable = ({
                 <div className="relative rounded-lg border border-muted">
                     <div className="overflow-x-auto">
                         <div className="bg-muted/25 min-w-[800px]">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="hidden md:table-cell w-14">
-                                            #
-                                        </TableHead>
-                                        <TableHead className="w-60">
-                                            Player
-                                        </TableHead>
-                                        <TableHead className="w-60">
-                                            Staff
-                                        </TableHead>
-                                        <TableHead className="w-96">
-                                            Reason
-                                        </TableHead>
-                                        <TableHead className="w-40">
-                                            Issued
-                                        </TableHead>
-                                        <TableHead className="w-16 text-right">
-                                            Actions
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {showSkeleton ? (
-                                        [...Array(itemsPerPage)].map((_, i) => (
-                                            <SkeletonRow
-                                                key={i}
-                                                opacity={
-                                                    1 - (i / itemsPerPage) * 0.9
-                                                }
-                                            />
-                                        ))
-                                    ) : records?.items.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell
-                                                colSpan={6}
-                                                className="h-32 text-center text-muted-foreground"
-                                            >
-                                                No records found
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        records?.items.map(
-                                            (record: TablePunishmentRecord) => (
-                                                <RecordRow
-                                                    key={record.id}
-                                                    record={record}
-                                                />
-                                            )
-                                        )
-                                    )}
-                                </TableBody>
-                            </Table>
+                            <DataTable
+                                columns={COLUMNS}
+                                data={records?.items ?? []}
+                                loading={isLoading || isFetching}
+                                rowsPerPage={itemsPerPage}
+                                skeletonRow={<SkeletonRow />}
+                                contextMenu={(row) => (
+                                    <RecordContextMenu record={row.original} />
+                                )}
+                                noResultsMessage="No records were found matching your query."
+                            />
                         </div>
                     </div>
                 </div>
@@ -249,7 +326,7 @@ const SearchInput = ({
 const SkeletonRow = ({ opacity = 1 }: { opacity?: number }): ReactElement => (
     <TableRow style={{ opacity }}>
         <TableCell className="hidden md:table-cell text-zinc-300/75">
-            <Skeleton className="w-8 h-4" />
+            <Skeleton className="w-12 h-4" />
         </TableCell>
         <TableCell>
             <div className="flex gap-3 items-center">

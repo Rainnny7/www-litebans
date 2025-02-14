@@ -12,7 +12,7 @@ import { type TablePunishmentRecord } from "~/types/punishment-record";
 
 type RecordContextMenuProps = {
     record: TablePunishmentRecord;
-    children: ReactNode;
+    children?: ReactNode;
 };
 
 const RecordContextMenu = ({ record, children }: RecordContextMenuProps) => {
