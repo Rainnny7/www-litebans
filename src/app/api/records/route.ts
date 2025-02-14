@@ -109,7 +109,7 @@ async function fetchRecordsFromDatabase(
     );
 
     // Track analytics event
-    trackRecordFetch(category.id);
+    trackRecordFetch(category.displayName);
 
     return { records, totalRecords };
 }

@@ -19,8 +19,6 @@ if (isUsingAnalytics && !globalForUmami.initialized) {
 
 export const trackRecordFetch = (category: string) => {
     if (isUsingAnalytics) {
-        umami.track("Record Fetch", {
-            category,
-        });
+        umami.track(`${category} Records Fetched`);
     }
 };
