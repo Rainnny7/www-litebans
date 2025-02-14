@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { type NextFont } from "next/dist/compiled/@next/font";
 import localFont from "next/font/local";
+import Script from "next/script";
 import type { ReactElement, ReactNode } from "react";
 import { cn } from "~/common/utils";
 import AppProviders from "~/components/app-providers";
@@ -48,6 +49,11 @@ const RootLayout = ({
                     "linear-gradient(to top, hsl(240, 6%, 10%), var(--background))",
             }}
         >
+            <Script
+                src="https://analytics.rainnny.club/script.js"
+                data-website-id="0d551b69-be15-47f4-8c9d-963fb182031d"
+                defer
+            />
             <AppProviders>
                 <OnekoKitty />
                 <div className="min-h-screen px-7 pb-5 max-w-(--breakpoint-xl) mx-auto flex flex-col gap-5">

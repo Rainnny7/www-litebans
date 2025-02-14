@@ -17,6 +17,10 @@ export const env = createEnv({
         // Redis
         UPSTASH_REDIS_REST_URL: z.string(),
         UPSTASH_REDIS_REST_TOKEN: z.string(),
+
+        // Analytics
+        ANALYTICS_HOST: z.string(),
+        ANALYTICS_ID: z.string(),
     },
 
     client: {
@@ -56,6 +60,10 @@ export const env = createEnv({
         // Redis
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
         UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+
+        // Analytics
+        ANALYTICS_HOST: process.env.ANALYTICS_HOST,
+        ANALYTICS_ID: process.env.ANALYTICS_ID,
     },
 
     /**
@@ -71,4 +79,4 @@ export const env = createEnv({
     emptyStringAsUndefined: true,
 });
 
-export const isProd = env.NODE_ENV === "production";
+export const isProd: boolean = env.NODE_ENV === "production";
