@@ -51,6 +51,17 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
     },
     {
         accessorKey: "player",
+        // header: ({ column }) => (
+        //     <Button
+        //         className="p-1.5 h-7"
+        //         variant="ghost"
+        //         onClick={() =>
+        //             column.toggleSorting(column.getIsSorted() === "asc")
+        //         }
+        //     >
+        //         Player
+        //     </Button>
+        // ),
         header: "Player",
         size: 205,
         cell: ({ row }) => {
@@ -239,7 +250,6 @@ const RecordsTable = ({
 
             {/* Records Table */}
             <div className="flex flex-col gap-1.5">
-                {/* Table with horizontal scroll */}
                 <div className="relative rounded-lg border border-muted">
                     <div className="overflow-x-auto">
                         <div className="bg-muted/25 min-w-[800px]">

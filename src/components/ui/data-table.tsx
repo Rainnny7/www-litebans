@@ -4,8 +4,10 @@ import {
     type ColumnDef,
     flexRender,
     getCoreRowModel,
+    getSortedRowModel,
     type Table as ReactTable,
     type Row,
+    type SortingState,
     useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -13,6 +15,7 @@ import {
     type CSSProperties,
     type ReactElement,
     type ReactNode,
+    useState,
 } from "react";
 
 import {
@@ -45,6 +48,8 @@ export function DataTable<TData, TValue>({
     noResultsMessage = "No results for your query.",
     contextMenu,
 }: DataTableProps<TData, TValue>) {
+    const [sorting, setSorting] = useState<SortingState>([]);
+
     const columnAlignments: ColumnAlignment = {
         actions: "text-right",
     };
@@ -53,6 +58,11 @@ export function DataTable<TData, TValue>({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        state: {
+            sorting,
+        },
     });
 
     return (
@@ -64,8 +74,8 @@ export function DataTable<TData, TValue>({
                             {headerGroup.headers.map((header) => (
                                 <TableHead
                                     key={header.id}
-                                    style={{ width: header.getSize() }}
                                     className={columnAlignments[header.id]}
+                                    style={{ width: header.getSize() }}
                                 >
                                     {header.isPlaceholder
                                         ? null
@@ -73,6 +83,14 @@ export function DataTable<TData, TValue>({
                                               header.column.columnDef.header,
                                               header.getContext()
                                           )}
+                                    <span>
+                                        {header.column.getIsSorted()
+                                            ? header.column.getIsSorted() ===
+                                              "desc"
+                                                ? ">"
+                                                : "<"
+                                            : ""}
+                                    </span>
                                 </TableHead>
                             ))}
                         </TableRow>
