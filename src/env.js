@@ -19,8 +19,8 @@ export const env = createEnv({
         UPSTASH_REDIS_REST_TOKEN: z.string(),
 
         // Analytics
-        ANALYTICS_HOST: z.string(),
-        ANALYTICS_ID: z.string(),
+        ANALYTICS_HOST: z.string().optional(),
+        ANALYTICS_ID: z.string().optional(),
     },
 
     client: {
@@ -80,3 +80,4 @@ export const env = createEnv({
 });
 
 export const isProd = env.NODE_ENV === "production";
+export const isUsingAnalytics = env.ANALYTICS_HOST && env.ANALYTICS_ID;

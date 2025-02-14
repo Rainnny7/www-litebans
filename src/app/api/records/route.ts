@@ -6,6 +6,7 @@ import { checkDiscordRole } from "~/common/auth";
 import { Paginator } from "~/common/paginator";
 import { fetchPlayerData } from "~/common/player";
 import { db } from "~/server/drizzle";
+import { trackRecordFetch } from "~/server/umami";
 import { getPunishmentCategory } from "~/types/punishment-category";
 import {
     type BasePunishmentRecord,
@@ -106,6 +107,10 @@ async function fetchRecordsFromDatabase(
     console.log(
         `[API::fetchRecords] Took ${Date.now() - before}ms to fetch ${records.length}/${totalRecords} records`
     );
+
+    // Track analytics event
+    trackRecordFetch(category.id);
+
     return { records, totalRecords };
 }
 
