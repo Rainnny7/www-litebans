@@ -14,7 +14,7 @@ const playerCache = new AppCache({
 export const fetchPlayerData = async (
     uuid: string
 ): Promise<TablePlayerData | undefined> => {
-    if (uuid === "CONSOLE") return undefined;
+    if (uuid === "CONSOLE" || isBedrockUuid(uuid)) return undefined;
     return await fetchWithCache(playerCache, `player:${uuid}`, async () => {
         try {
             const player: CachedPlayer = await getPlayer(uuid);
@@ -28,3 +28,12 @@ export const fetchPlayerData = async (
         }
     });
 };
+
+/**
+ * Checks if a UUID is a Bedrock UUID
+ *
+ * @param uuid The UUID to check
+ * @returns whether the UUID is a Bedrock UUID
+ */
+const isBedrockUuid = (uuid: string) =>
+    uuid.replace(/-/g, "").substring(0, 16) === "0".repeat(16);
