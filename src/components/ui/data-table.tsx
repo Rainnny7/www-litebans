@@ -10,13 +10,14 @@ import {
     type SortingState,
     useReactTable,
 } from "@tanstack/react-table";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import {
     cloneElement,
     type CSSProperties,
     type ReactElement,
     type ReactNode,
-    useState,
 } from "react";
+import { Button } from "~/components/ui/button";
 
 import {
     Table,
@@ -35,6 +36,8 @@ interface DataTableProps<TData, TValue> {
     skeletonRow: ReactNode;
     noResultsMessage?: string;
     contextMenu?: (row: Row<TData>) => ReactElement<{ children?: ReactNode }>;
+    sorting?: SortingState;
+    onSortingChange?: (sorting: any) => void;
 }
 
 type ColumnAlignment = Record<string, string>;
@@ -47,23 +50,24 @@ export function DataTable<TData, TValue>({
     skeletonRow,
     noResultsMessage = "No results for your query.",
     contextMenu,
+    sorting = [],
+    onSortingChange,
 }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = useState<SortingState>([]);
-
-    const columnAlignments: ColumnAlignment = {
-        actions: "text-right",
-    };
-
     const table: ReactTable<TData> = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        onSortingChange: setSorting,
+        onSortingChange,
         getSortedRowModel: getSortedRowModel(),
         state: {
             sorting,
         },
+        manualSorting: true,
     });
+
+    const columnAlignments: ColumnAlignment = {
+        actions: "text-right",
+    };
 
     return (
         <div className="w-full">
@@ -71,28 +75,53 @@ export function DataTable<TData, TValue>({
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <TableHead
-                                    key={header.id}
-                                    className={columnAlignments[header.id]}
-                                    style={{ width: header.getSize() }}
-                                >
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                              header.column.columnDef.header,
-                                              header.getContext()
-                                          )}
-                                    <span>
-                                        {header.column.getIsSorted()
-                                            ? header.column.getIsSorted() ===
-                                              "desc"
-                                                ? ">"
-                                                : "<"
-                                            : ""}
-                                    </span>
-                                </TableHead>
-                            ))}
+                            {headerGroup.headers.map((header) => {
+                                const canSort: boolean =
+                                    header.column.getCanSort();
+                                const headerValue: ReactNode = flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                );
+                                return (
+                                    <TableHead
+                                        key={header.id}
+                                        className={columnAlignments[header.id]}
+                                        style={{ width: header.getSize() }}
+                                    >
+                                        {!header.isPlaceholder &&
+                                            (canSort ? (
+                                                <Button
+                                                    className="p-1.5 h-7"
+                                                    variant="ghost"
+                                                    onClick={() =>
+                                                        header.column.toggleSorting(
+                                                            header.column.getIsSorted() ===
+                                                                "asc"
+                                                        )
+                                                    }
+                                                >
+                                                    {headerValue}
+
+                                                    {/* Sort Indicator */}
+                                                    {sorting?.[0]?.id ===
+                                                    header.id ? (
+                                                        <span>
+                                                            {sorting[0].desc ? (
+                                                                <ArrowUp />
+                                                            ) : (
+                                                                <ArrowDown />
+                                                            )}
+                                                        </span>
+                                                    ) : (
+                                                        <ArrowUpDown />
+                                                    )}
+                                                </Button>
+                                            ) : (
+                                                headerValue
+                                            ))}
+                                    </TableHead>
+                                );
+                            })}
                         </TableRow>
                     ))}
                 </TableHeader>

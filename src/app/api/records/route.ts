@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { count, desc, eq, or } from "drizzle-orm";
+import { asc, count, desc, eq, or } from "drizzle-orm";
 import { forbidden, notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
 import { checkDiscordRole } from "~/common/auth";
@@ -21,6 +21,8 @@ async function validateRequest(request: NextRequest) {
         searchParams.get("itemsPerPage") ?? "10"
     );
     const search: string | null = searchParams.get("search");
+    const sortBy: string | null = searchParams.get("sortBy");
+    const sortOrder: string | null = searchParams.get("sortOrder");
 
     // Ensure the user is authenticated
     const { userId } = await auth();
@@ -42,7 +44,15 @@ async function validateRequest(request: NextRequest) {
         notFound();
     }
 
-    return { categoryId, page, itemsPerPage, category, search };
+    return {
+        categoryId,
+        page,
+        itemsPerPage,
+        category,
+        search,
+        sortBy,
+        sortOrder,
+    };
 }
 
 async function fetchRecordsFromDatabase(
@@ -50,7 +60,9 @@ async function fetchRecordsFromDatabase(
     category: any,
     page: number,
     itemsPerPage: number,
-    search: string | null
+    search: string | null,
+    sortBy: string | null,
+    sortOrder: string | null
 ) {
     console.log(`[API::fetchRecords] Fetching ${categoryId} records...`);
     const before: number = Date.now();
@@ -62,21 +74,32 @@ async function fetchRecordsFromDatabase(
             search = player.uuid;
         }
     }
+
+    // Build the search query
     const searchQuery = search
         ? or(
               eq(category.table.uuid, search),
               eq(category.table.bannedByUuid, search)
           )
         : undefined;
+
+    // Build the base query
+    let query: any = db.select().from(category.table).where(searchQuery);
+
+    // Apply sorting if specified
+    if (sortBy && sortOrder) {
+        const orderFunc = sortOrder === "desc" ? desc : asc;
+        query = query.orderBy(
+            orderFunc(category.table[sortBy as keyof typeof category.table])
+        );
+    } else {
+        // Default sorting
+        query = query.orderBy(desc(category.table.time));
+    }
+
     const [totalCount, records] = (await Promise.all([
         db.select({ count: count() }).from(category.table).where(searchQuery),
-        db
-            .select()
-            .from(category.table)
-            .where(searchQuery)
-            .orderBy(desc(category.table.time))
-            .offset((page - 1) * itemsPerPage)
-            .limit(itemsPerPage),
+        query.offset((page - 1) * itemsPerPage).limit(itemsPerPage),
     ])) as [{ count: number }[], BasePunishmentRecord[]];
     const totalRecords = totalCount.at(0)?.count ?? 0;
 
@@ -136,7 +159,15 @@ export const GET = async (request: NextRequest) => {
     const validation = await validateRequest(request);
     if (validation instanceof Response) return validation;
 
-    const { categoryId, page, itemsPerPage, category, search } = validation;
+    const {
+        categoryId,
+        page,
+        itemsPerPage,
+        category,
+        search,
+        sortBy,
+        sortOrder,
+    } = validation;
     try {
         // throw an sql error on purpose
         const { records, totalRecords } = await fetchRecordsFromDatabase(
@@ -144,7 +175,9 @@ export const GET = async (request: NextRequest) => {
             category,
             page,
             itemsPerPage,
-            search
+            search,
+            sortBy,
+            sortOrder
         );
         const paginatedPage = await new Paginator<BasePunishmentRecord>()
             .setItemsPerPage(itemsPerPage)

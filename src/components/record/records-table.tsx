@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { type ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef, type SortingState } from "@tanstack/react-table";
 import { Info, LoaderCircle } from "lucide-react";
 import { DateTime } from "luxon";
 import {
@@ -40,6 +40,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         accessorKey: "id",
         header: "#",
         size: 45,
+        enableSorting: false,
         cell: ({ row }) => (
             <div className="hidden md:table-cell text-zinc-300/75">
                 {numberWithCommas(row.getValue("id"))}
@@ -48,19 +49,9 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
     },
     {
         accessorKey: "player",
-        header: ({ column }) => (
-            <Button
-                className="p-1.5 h-7"
-                variant="ghost"
-                onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === "asc")
-                }
-            >
-                Player
-            </Button>
-        ),
-        // header: "Player",
+        header: "Player",
         size: 205,
+        enableSorting: false,
         cell: ({ row }) => {
             const player: TablePlayerData | undefined = row.original.player;
             return (
@@ -74,7 +65,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         },
     },
     {
-        accessorKey: "staff",
+        accessorKey: "bannedByName",
         header: "Staff",
         size: 205,
         cell: ({ row }) => {
@@ -100,6 +91,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         accessorKey: "reason",
         header: "Reason",
         size: 250,
+        enableSorting: false,
         cell: ({ row }) => {
             const reason: string = row.original.reason;
             const colorReason = (truncate: boolean) =>
@@ -121,6 +113,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         accessorKey: "issued",
         header: "Issued",
         size: 110,
+        enableSorting: false,
         cell: ({ row }) => {
             const issued: DateTime = DateTime.fromMillis(row.original.time);
             return (
@@ -136,6 +129,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         accessorKey: "actions",
         header: () => <div className="text-center">Actions</div>,
         size: 20,
+        enableSorting: false,
         cell: ({ row }) => (
             <div className="flex justify-center">
                 <RecordDialog
@@ -160,10 +154,14 @@ const RecordsTable = ({
     category,
     search: initialSearch,
     page: initialPage,
+    sortBy: initialSortBy,
+    sortOrder: initialSortOrder,
 }: {
     category: PunishmentCategoryInfo & { id: string };
     search: string;
     page: number;
+    sortBy: string;
+    sortOrder: string;
 }): ReactElement => {
     // State management
     const [search, setSearch] = useState<string>(initialSearch);
@@ -171,15 +169,27 @@ const RecordsTable = ({
         useState<string>(initialSearch);
     const [itemsPerPage, setItemsPerPage] = useState<number>(10);
     const [page, setPage] = useState<number>(initialPage);
+    const [sorting, setSorting] = useState<SortingState>([
+        { id: initialSortBy, desc: initialSortOrder === "desc" },
+    ]);
 
     // Update the current URL params
-    const updateUrlParams = (page: number, search: string | undefined) => {
+    const updateUrlParams = (
+        page: number,
+        search: string | undefined,
+        sort?: SortingState
+    ) => {
         const params = new URLSearchParams();
         params.set("page", page.toString());
         if (search) {
             params.set("query", search);
         }
+        if (sort?.[0]?.id) {
+            params.set("sortBy", sort[0].id);
+            params.set("sortOrder", sort[0].desc ? "desc" : "asc");
+        }
         const url = `?${params.toString()}`;
+        console.log({ url });
         window.history.replaceState({ page: url }, "", url);
     };
 
@@ -187,26 +197,40 @@ const RecordsTable = ({
     const debouncedSetSearch = useDebouncedCallback((value: string) => {
         setDebouncedSearch(value);
         handlePageChange(1);
-        updateUrlParams(1, value);
+        updateUrlParams(1, value, sorting);
     }, DEBOUNCE_TIME);
 
     // Update the URL params when page changes
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
-        updateUrlParams(newPage, debouncedSearch); // Update the state in the URL
+        updateUrlParams(newPage, debouncedSearch, sorting); // Update the state in the URL
         window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll back to the top
     };
 
-    // Fetch the records based on the current page and debounced search query
+    // Fetch the records based on current page, search, and sorting
     const {
         data: records,
         isLoading,
         isFetching,
         error,
     } = useQuery({
-        queryKey: ["records", category.id, page, itemsPerPage, debouncedSearch],
+        queryKey: [
+            "records",
+            category.id,
+            page,
+            itemsPerPage,
+            debouncedSearch,
+            sorting,
+        ],
         queryFn: async () => {
             try {
+                const sortParam = sorting?.[0]?.id
+                    ? {
+                          sortBy: sorting[0].id,
+                          sortOrder: sorting[0].desc ? "desc" : "asc",
+                      }
+                    : {};
+
                 return await api.get<Page<BasePunishmentRecord>>(
                     "/api/records",
                     {
@@ -215,6 +239,7 @@ const RecordsTable = ({
                             page,
                             itemsPerPage,
                             search: debouncedSearch,
+                            ...sortParam,
                         },
                     }
                 );
@@ -277,6 +302,16 @@ const RecordsTable = ({
                                         ? "Failed to load records"
                                         : "No records were found matching your query."
                                 }
+                                sorting={sorting}
+                                onSortingChange={(newSorting) => {
+                                    setSorting(newSorting);
+                                    updateUrlParams(
+                                        page,
+                                        debouncedSearch,
+                                        newSorting
+                                    );
+                                    console.log({ newSorting });
+                                }}
                             />
                         </div>
                     </div>
