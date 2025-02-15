@@ -1,5 +1,4 @@
 import { type ReactNode } from "react";
-import { Button } from "~/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -26,7 +25,6 @@ const RecordDialog = ({ record, children }: RecordDialogProps) => (
                     available.
                 </DialogDescription>
             </DialogHeader>
-            <Button>Close</Button>
         </DialogContent>
     </Dialog>
 );

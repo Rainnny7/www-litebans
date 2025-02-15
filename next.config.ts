@@ -1,12 +1,4 @@
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip
- * env validation. This is especially useful for Docker builds.
- */
-import { DateTime } from "luxon";
 import type { NextConfig } from "next";
-import "./src/env.js";
-
-const now: DateTime = DateTime.now();
 
 const config: NextConfig = {
     output: "standalone",
@@ -24,5 +16,6 @@ const config: NextConfig = {
         reactCompiler: true,
         authInterrupts: true,
     },
+    transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core"],
 };
 export default config;

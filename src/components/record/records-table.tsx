@@ -132,15 +132,19 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         enableSorting: false,
         cell: ({ row }) => (
             <div className="flex justify-center">
-                <RecordDialog record={row.original}>
-                    <Button
-                        className="size-4 cursor-pointer"
-                        variant="ghost"
-                        size="icon"
-                    >
-                        <Info className="size-2.5 text-muted-foreground hover:text-foreground transition-all transform-gpu" />
-                    </Button>
-                </RecordDialog>
+                <SimpleTooltip content="More Info">
+                    <div className="flex items-center">
+                        <RecordDialog record={row.original}>
+                            <Button
+                                className="size-4 cursor-pointer"
+                                variant="ghost"
+                                size="icon"
+                            >
+                                <Info className="size-2.5 text-muted-foreground hover:text-foreground transition-all transform-gpu" />
+                            </Button>
+                        </RecordDialog>
+                    </div>
+                </SimpleTooltip>
             </div>
         ),
     },

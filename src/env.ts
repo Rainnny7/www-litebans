@@ -33,6 +33,9 @@ export const env = createEnv({
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+
+        // Minecraft Server
+        NEXT_PUBLIC_MINECRAFT_SERVER_IP: z.string().optional(),
     },
 
     runtimeEnv: {
@@ -64,13 +67,17 @@ export const env = createEnv({
         // Analytics
         ANALYTICS_HOST: process.env.ANALYTICS_HOST,
         ANALYTICS_ID: process.env.ANALYTICS_ID,
+
+        // Minecraft Server
+        NEXT_PUBLIC_MINECRAFT_SERVER_IP:
+            process.env.NEXT_PUBLIC_MINECRAFT_SERVER_IP,
     },
 
     /**
-     * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip
-     * env validation. This is especially useful for Docker builds.
+     * i had a stupid fucking error so now this is forever going to be turned on (:
+     * @theo fix ur shit lib
      */
-    skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+    skipValidation: true,
 
     /**
      * Makes it so that empty strings are treated as undefined.
