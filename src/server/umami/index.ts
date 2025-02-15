@@ -17,6 +17,11 @@ if (isUsingAnalytics && !globalForUmami.initialized) {
     });
 }
 
+/**
+ * Track the record fetch event.
+ *
+ * @param category The category of the records fetched.
+ */
 export const trackRecordFetch = (category: string) => {
     if (isUsingAnalytics) {
         umami.track(`${category} Records Fetched`);
