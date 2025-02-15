@@ -122,33 +122,31 @@ async function mapPlayerData(
     );
     const before = Date.now();
 
-    // Create arrays of UUIDs to fetch in parallel
-    const playerUuids = records.map((record) => record.uuid);
-    const staffUuids = records
-        .map((record) => record.bannedByUuid)
-        .filter(Boolean);
-
-    // Fetch all player and staff data in parallel
-    const [playerDataMap, staffDataMap] = await Promise.all([
-        Promise.all(playerUuids.map((uuid) => fetchPlayerData(uuid))),
-        Promise.all(staffUuids.map((uuid) => fetchPlayerData(uuid ?? ""))),
+    // Create arrays of unique UUIDs to fetch in parallel
+    const uniqueUuids = new Set([
+        ...records.map((record) => record.uuid),
+        ...records.map((record) => record.bannedByUuid).filter(Boolean),
     ]);
 
-    // Create lookup maps
-    const playerLookup = Object.fromEntries(
-        playerUuids.map((uuid, i) => [uuid, playerDataMap[i]])
-    );
-    const staffLookup = Object.fromEntries(
-        staffUuids.map((uuid, i) => [uuid, staffDataMap[i]])
+    // Fetch all player data in parallel
+    const playerDataResults = await Promise.all(
+        Array.from(uniqueUuids)
+            .filter((uuid) => uuid !== null)
+            .map((uuid) => fetchPlayerData(uuid))
     );
 
-    // Map the records using the lookup maps
+    // Create a single lookup map for all UUIDs
+    const uuidLookup = Object.fromEntries(
+        Array.from(uniqueUuids).map((uuid, i) => [uuid, playerDataResults[i]])
+    );
+
+    // Map the records using the lookup map
     const mappedRecords = records.map(
         (record): TablePunishmentRecord => ({
             ...record,
-            player: playerLookup[record.uuid],
+            player: uuidLookup[record.uuid],
             staff: record.bannedByUuid
-                ? staffLookup[record.bannedByUuid]
+                ? uuidLookup[record.bannedByUuid]
                 : undefined,
         })
     );

@@ -1,4 +1,5 @@
 import { type CachedPlayer, getPlayer } from "restfulmc-lib";
+// import { type CachedPlayer, getPlayer } from "mcutils-library";
 import { AppCache, fetchWithCache } from "~/common/cache";
 import { type TablePlayerData } from "~/types/punishment-record";
 
@@ -17,7 +18,12 @@ export const fetchPlayerData = async (
     if (uuid === "CONSOLE" || isBedrockUuid(uuid)) return undefined;
     return await fetchWithCache(playerCache, `player:${uuid}`, async () => {
         try {
+            const before = Date.now();
             const player: CachedPlayer = await getPlayer(uuid);
+            const after = Date.now();
+            console.log(
+                `[API::fetchPlayerData] Took ${after - before}ms for ${uuid}`
+            );
             return {
                 uuid: player.uniqueId,
                 username: player.username,
