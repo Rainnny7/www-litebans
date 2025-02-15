@@ -261,6 +261,7 @@ const RecordsTable = ({
         placeholderData: (prev) => prev,
     });
 
+    const loading: boolean = isLoading || isFetching;
     return (
         <div className="flex flex-col gap-3">
             {/* Header */}
@@ -290,7 +291,7 @@ const RecordsTable = ({
                             <DataTable
                                 columns={COLUMNS}
                                 data={records?.items ?? []}
-                                loading={isLoading || isFetching}
+                                loading={loading}
                                 rowsPerPage={itemsPerPage}
                                 skeletonRow={<SkeletonRow />}
                                 contextMenu={(row) => (
@@ -319,6 +320,7 @@ const RecordsTable = ({
                 {!error && (
                     <PaginationControls
                         page={records}
+                        loading={loading}
                         setPage={handlePageChange}
                         rowsPerPage={itemsPerPage}
                         onRowsPerPageChange={(value: string) => {

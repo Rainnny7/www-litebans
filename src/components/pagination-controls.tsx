@@ -3,6 +3,7 @@ import {
     ChevronRight,
     ChevronsLeft,
     ChevronsRight,
+    LoaderCircle,
 } from "lucide-react";
 import {
     useState,
@@ -29,6 +30,7 @@ import {
 
 type PaginationControlsProps = {
     page: Page<any> | undefined;
+    loading: boolean;
     setPage: (page: number) => void;
     rowsPerPage: number;
     onRowsPerPageChange: (value: string) => void;
@@ -36,6 +38,7 @@ type PaginationControlsProps = {
 
 const PaginationControls = ({
     page,
+    loading,
     setPage,
     rowsPerPage,
     onRowsPerPageChange,
@@ -109,14 +112,22 @@ const PaginationControls = ({
                                 maxPage={maxPageNumber}
                                 setPage={setPage}
                             >
-                                <PaginationLink
-                                    className="px-2"
-                                    size="default"
-                                    isActive={false}
-                                >
-                                    Page {numberWithCommas(pageNumber)} of{" "}
-                                    {numberWithCommas(maxPageNumber)}
-                                </PaginationLink>
+                                <div className="relative">
+                                    {loading && (
+                                        <div className="absolute inset-0 flex justify-center items-center bg-zinc-900/50 backdrop-blur-xs rounded-xl">
+                                            <LoaderCircle className="size-5 animate-spin" />
+                                        </div>
+                                    )}
+
+                                    <PaginationLink
+                                        className="px-2"
+                                        size="default"
+                                        isActive={false}
+                                    >
+                                        Page {numberWithCommas(pageNumber)} of{" "}
+                                        {numberWithCommas(maxPageNumber)}
+                                    </PaginationLink>
+                                </div>
                             </PageSelector>
                         </PaginationItem>
 
@@ -199,7 +210,7 @@ const PageSelector = ({
                         min={1}
                         max={maxPage}
                     />
-                    <Button className="b" size="sm">
+                    <Button className="bg-zinc-800" size="sm">
                         Go
                     </Button>
                 </form>
