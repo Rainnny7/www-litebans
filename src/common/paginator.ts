@@ -44,7 +44,10 @@ export class Paginator<T> {
      * @returns A promise resolving to the page of items.
      * @throws throws an error if the page number is invalid.
      */
-    async getPage(page: number, fetchItems?: FetchItemsFunction<T>): Promise<Page<T>> {
+    async getPage(
+        page: number,
+        fetchItems?: FetchItemsFunction<T>
+    ): Promise<Page<T>> {
         const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
         if (totalPages === 0) {
             return new Page<T>(
