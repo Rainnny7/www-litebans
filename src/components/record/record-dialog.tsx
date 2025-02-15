@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { Button } from "~/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -11,12 +12,12 @@ import { type TablePunishmentRecord } from "~/types/punishment-record";
 
 type RecordDialogProps = {
     record: TablePunishmentRecord;
-    trigger: ReactNode;
+    children: ReactNode;
 };
 
-const RecordDialog = ({ record, trigger }: RecordDialogProps) => (
+const RecordDialog = ({ record, children }: RecordDialogProps) => (
     <Dialog>
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
+        <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>#{record.id}</DialogTitle>
@@ -25,6 +26,7 @@ const RecordDialog = ({ record, trigger }: RecordDialogProps) => (
                     available.
                 </DialogDescription>
             </DialogHeader>
+            <Button>Close</Button>
         </DialogContent>
     </Dialog>
 );
