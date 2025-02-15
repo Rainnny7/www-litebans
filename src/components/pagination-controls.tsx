@@ -12,7 +12,7 @@ import {
     type ReactNode,
 } from "react";
 import { type Page } from "~/common/paginator";
-import { cn, numberWithCommas } from "~/common/utils";
+import { cn, formatResponseTime, numberWithCommas } from "~/common/utils";
 import SimpleCombobox from "~/components/simple-combobox";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -29,6 +29,7 @@ import {
 } from "~/components/ui/popover";
 
 type PaginationControlsProps = {
+    responseTime: number;
     page: Page<any> | undefined;
     loading: boolean;
     setPage: (page: number) => void;
@@ -37,6 +38,7 @@ type PaginationControlsProps = {
 };
 
 const PaginationControls = ({
+    responseTime,
     page,
     loading,
     setPage,
@@ -51,7 +53,8 @@ const PaginationControls = ({
             <div className="flex gap-2 items-center text-sm text-muted-foreground">
                 Showing rows {numberWithCommas(page?.metadata.start ?? 0)} -{" "}
                 {numberWithCommas(page?.metadata.end ?? 0)} of{" "}
-                {numberWithCommas(page?.metadata.totalItems ?? 0)} records
+                {numberWithCommas(page?.metadata.totalItems ?? 0)} records (Took{" "}
+                {formatResponseTime(responseTime)})
             </div>
 
             {/* Right */}

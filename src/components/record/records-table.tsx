@@ -151,6 +151,8 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
 ];
 const DEBOUNCE_TIME = 500;
 
+type RecordsResponseType = Page<BasePunishmentRecord> & { time: number };
+
 const RecordsTable = ({
     category,
     search: initialSearch,
@@ -224,25 +226,20 @@ const RecordsTable = ({
         ],
         queryFn: async () => {
             try {
-                const sortParam = sorting?.[0]?.id
-                    ? {
-                          sortBy: sorting[0].id,
-                          sortOrder: sorting[0].desc ? "desc" : "asc",
-                      }
-                    : {};
-
-                return await api.get<Page<BasePunishmentRecord>>(
-                    "/api/records",
-                    {
-                        searchParams: {
-                            category: category.id,
-                            page,
-                            itemsPerPage,
-                            search: debouncedSearch,
-                            ...sortParam,
-                        },
-                    }
-                );
+                return await api.get<RecordsResponseType>("/api/records", {
+                    searchParams: {
+                        category: category.id,
+                        page,
+                        itemsPerPage,
+                        search: debouncedSearch,
+                        ...(sorting?.[0]?.id
+                            ? {
+                                  sortBy: sorting[0].id,
+                                  sortOrder: sorting[0].desc ? "desc" : "asc",
+                              }
+                            : {}),
+                    },
+                });
             } catch (error) {
                 // If there is an error whilst fetching records, handle it and inform the user
                 const cause: string = (error as any).cause.data.error;
@@ -320,7 +317,8 @@ const RecordsTable = ({
                 {/* Pagination */}
                 {!error && (
                     <PaginationControls
-                        page={records}
+                        responseTime={records?.time ?? 0}
+                    page={records}
                         loading={loading}
                         setPage={handlePageChange}
                         rowsPerPage={itemsPerPage}
