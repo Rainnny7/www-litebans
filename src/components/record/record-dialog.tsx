@@ -1,12 +1,7 @@
 import { type ReactNode } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "~/components/ui/dialog";
+import { STEVE_AVATAR } from "~/common/player";
+import PlayerAvatar from "~/components/player-avatar";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { type TablePunishmentRecord } from "~/types/punishment-record";
 
 type RecordDialogProps = {
@@ -17,14 +12,14 @@ type RecordDialogProps = {
 const RecordDialog = ({ record, children }: RecordDialogProps) => (
     <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>#{record.id}</DialogTitle>
-                <DialogDescription>
-                    Viewing extra information about records is not yet
-                    available.
-                </DialogDescription>
-            </DialogHeader>
+        <DialogContent className="w-full !max-w-[40rem]">
+            {/* Top */}
+            <div className="flex items-center">
+                <PlayerAvatar avatar={record.player?.avatar ?? STEVE_AVATAR} />
+                <span className="truncate">
+                    {record.player?.username ?? "Player (Bedrock?)"}
+                </span>
+            </div>
         </DialogContent>
     </Dialog>
 );

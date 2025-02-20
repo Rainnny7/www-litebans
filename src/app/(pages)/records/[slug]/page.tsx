@@ -56,6 +56,12 @@ const RecordsPage = async ({
     );
 };
 
+/**
+ * Generate the metadata for this page.
+ *
+ * @param param the parameters from the URL
+ * @returns the generated metadata
+ */
 export const generateMetadata = async ({
     params,
 }: {

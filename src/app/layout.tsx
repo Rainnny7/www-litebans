@@ -13,6 +13,7 @@ import { Toaster } from "~/components/ui/sonner";
 import { env, isProd, isUsingAnalytics } from "~/env";
 import "~/styles/globals.css";
 
+// Default metadata for the app
 export const metadata: Metadata = {
     title: {
         default: env.NEXT_PUBLIC_APP_NAME,
@@ -49,6 +50,7 @@ const RootLayout = ({
                     "linear-gradient(to top, hsl(240, 6%, 10%), var(--background))",
             }}
         >
+            {/* Handle analytics */}
             {isProd && isUsingAnalytics && (
                 <Script
                     src={`${env.ANALYTICS_HOST}/script.js`}

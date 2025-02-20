@@ -10,11 +10,43 @@ import ServerStatus from "~/components/server-status";
 import { Badge } from "~/components/ui/badge";
 import { env } from "~/env";
 import { db } from "~/server/drizzle";
-import { getAllPunishmentCategories } from "~/types/punishment-category";
+import {
+    getAllPunishmentCategories,
+    type TypedPunishmentCategoryInfo,
+} from "~/types/punishment-category";
 
 const Navbar = async (): Promise<ReactElement> => {
     const user: User | null = await currentUser();
     const isAuthorized = user && (await checkDiscordRole({ userId: user.id }));
+
+    /**
+     * Fetch the record count for the given category.
+     *
+     * @param category the category to fetch the count for
+     * @returns the fetch response
+     */
+    const fetchCategoryCount = async (
+        category: TypedPunishmentCategoryInfo
+    ) => {
+        try {
+            const result = await db
+                .select({ count: count() })
+                .from(category.table);
+            return {
+                category,
+                count: result.at(0)?.count ?? 0,
+                error: undefined,
+            };
+        } catch (error) {
+            console.error(`Error fetching count for ${category.type}:`, error);
+            return {
+                category,
+                count: 0,
+                error: `Failed to fetch ${category.type} count`,
+            };
+        }
+    };
+
     return (
         <nav className="-mx-7 px-7 py-5 flex justify-between gap-3.5 items-center border-b border-muted">
             {/* Left */}
@@ -23,6 +55,7 @@ const Navbar = async (): Promise<ReactElement> => {
                 <Link
                     className="flex gap-4 items-center hover:opacity-75 transition-all transform-gpu"
                     href="/"
+                    prefetch={false}
                     draggable={false}
                 >
                     <Image
@@ -40,15 +73,20 @@ const Navbar = async (): Promise<ReactElement> => {
                 {/* Categories */}
                 {isAuthorized && (
                     <div className="flex gap-2 sm:gap-3 items-center transition-all transform-gpu">
-                        {getAllPunishmentCategories().map(async (category) => {
-                            const recordCountResult = await db
-                                .select({ count: count() })
-                                .from(category.table);
-                            return (
+                        {isAuthorized &&
+                            (
+                                await Promise.all(
+                                    getAllPunishmentCategories().map(
+                                        (category) =>
+                                            fetchCategoryCount(category)
+                                    )
+                                )
+                            ).map(({ category, count, error }) => (
                                 <Link
                                     key={category.type}
                                     className="px-2.5 py-1 flex gap-2 items-center bg-muted/40 text-sm rounded-lg hover:opacity-75 transition-all transform-gpu"
                                     href={`/records/${category.type}`}
+                                    prefetch={false}
                                     draggable={false}
                                 >
                                     {cloneElement(category.icon, {
@@ -58,15 +96,17 @@ const Navbar = async (): Promise<ReactElement> => {
                                     <span>{category.displayName}s</span>
                                     <Badge
                                         className="hidden md:flex px-2"
-                                        variant="outline"
+                                        variant={
+                                            error ? "destructive" : "outline"
+                                        }
+                                        title={error ?? undefined}
                                     >
-                                        {numberWithCommas(
-                                            recordCountResult.at(0)?.count ?? 0
-                                        )}
+                                        {error
+                                            ? "Error"
+                                            : numberWithCommas(count)}
                                     </Badge>
                                 </Link>
-                            );
-                        })}
+                            ))}
                     </div>
                 )}
             </div>

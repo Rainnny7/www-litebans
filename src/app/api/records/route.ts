@@ -13,7 +13,26 @@ import {
     type TablePunishmentRecord,
 } from "~/types/punishment-record";
 
+/**
+ * Validate the request.
+ * <p>
+ * This will ensure the user is authenticated
+ * and the required params are present. If the
+ * request is valid, the data aquired from the
+ * request will be returned so it can be used
+ * in the handler.
+ * </p>
+ *
+ * @param request the request to validate
+ * @returns the error response, or request data
+ */
 async function validateRequest(request: NextRequest) {
+    // Ensure the user is authenticated
+    const { userId } = await auth();
+    if (!userId || !(await checkDiscordRole({ userId }))) {
+        forbidden();
+    }
+
     // Get the request params
     const { searchParams } = new URL(request.url);
     const categoryId: string | null = searchParams.get("category");
@@ -24,12 +43,6 @@ async function validateRequest(request: NextRequest) {
     const search: string | null = searchParams.get("search");
     const sortBy: string | null = searchParams.get("sortBy");
     const sortOrder: string | null = searchParams.get("sortOrder");
-
-    // Ensure the user is authenticated
-    const { userId } = await auth();
-    if (!userId || !(await checkDiscordRole({ userId }))) {
-        forbidden();
-    }
 
     // Missing required params
     if (!categoryId) {
@@ -45,6 +58,7 @@ async function validateRequest(request: NextRequest) {
         notFound();
     }
 
+    // Request is valid, return the data
     return {
         categoryId,
         page,
@@ -56,6 +70,18 @@ async function validateRequest(request: NextRequest) {
     };
 }
 
+/**
+ * Fetch records from the database based on the given params.
+ *
+ * @param categoryId the category ID
+ * @param category the category info
+ * @param page the page number
+ * @param itemsPerPage the number of items per page
+ * @param search the search query, if any
+ * @param sortBy the sort by field, if any
+ * @param sortOrder the sort order, if any
+ * @returns the records and total records
+ */
 async function fetchRecordsFromDatabase(
     categoryId: string,
     category: any,
@@ -66,9 +92,9 @@ async function fetchRecordsFromDatabase(
     sortOrder: string | null
 ) {
     console.log(`[API::fetchRecords] Fetching ${categoryId} records...`);
-    const before: number = Date.now();
+    const before: number = performance.now();
 
-    // If the search query is a username
+    // If the search query is a username, map it to a UUID
     if (search && search.length <= 16) {
         const player = await fetchPlayerData(search);
         if (player) {
@@ -87,17 +113,19 @@ async function fetchRecordsFromDatabase(
     // Build the base query
     let query: any = db.select().from(category.table).where(searchQuery);
 
-    // Apply sorting if specified
+    // Apply sorting of a field if specified
     if (sortBy && sortOrder) {
         const orderFunc = sortOrder === "desc" ? desc : asc;
         query = query.orderBy(
             orderFunc(category.table[sortBy as keyof typeof category.table])
         );
     } else {
-        // Default sorting
+        // Default sorting (by time issued)
         query = query.orderBy(desc(category.table.time));
     }
 
+    // Finally, execute the query and fetch the total record
+    // count, as well as the records for the given page
     const [totalCount, records] = (await Promise.all([
         db.select({ count: count() }).from(category.table).where(searchQuery),
         query.offset((page - 1) * itemsPerPage).limit(itemsPerPage),
@@ -105,27 +133,31 @@ async function fetchRecordsFromDatabase(
     const totalRecords = totalCount.at(0)?.count ?? 0;
 
     console.log(
-        `[API::fetchRecords] Took ${Date.now() - before}ms to fetch ${records.length}/${totalRecords} records`
+        `[API::fetchRecords] Took ${performance.now() - before}ms to fetch ${records.length}/${totalRecords} records`
     );
-
-    // Track analytics event
-    trackRecordFetch(category.displayName);
-
+    trackRecordFetch(category.displayName); // Track analytics event
     return { records, totalRecords };
 }
 
+/**
+ * Map UUIDs in the given records to player data, which
+ * is the player's actual username, and skin avatars.
+ *
+ * @param records the records to map
+ * @returns the mapped records
+ */
 async function mapPlayerData(
     records: BasePunishmentRecord[]
 ): Promise<TablePunishmentRecord[]> {
     console.log(
         `[API::fetchRecords] Mapping UUID -> Minecraft Account for ${records.length} records...`
     );
-    const before = Date.now();
+    const before = performance.now();
 
     // Create arrays of unique UUIDs to fetch in parallel
     const uniqueUuids = new Set([
         ...records.map((record) => record.uuid),
-        ...records.map((record) => record.bannedByUuid).filter(Boolean),
+        ...records.map((record) => record.bannedByUuid).filter(Boolean), // Filter out null values
     ]);
 
     // Fetch all player data in parallel
@@ -150,18 +182,25 @@ async function mapPlayerData(
                 : undefined,
         })
     );
-
     console.log(
-        `[API::fetchRecords] Took ${Date.now() - before}ms to map UUID -> Minecraft Account for ${mappedRecords.length} records`
+        `[API::fetchRecords] Took ${performance.now() - before}ms to map UUID -> Minecraft Account for ${mappedRecords.length} records`
     );
     return mappedRecords;
 }
 
+/**
+ * Handle the GET route to fetch records.
+ *
+ * @param request the request to handle
+ * @returns the response
+ */
 export const GET = async (request: NextRequest) => {
-    const before: number = Date.now();
+    // First validate the request and early return if it fails
+    const before: number = performance.now();
     const validation = await validateRequest(request);
     if (validation instanceof Response) return validation;
 
+    // Otherwise continue with the request
     const {
         categoryId,
         page,
@@ -172,7 +211,9 @@ export const GET = async (request: NextRequest) => {
         sortOrder,
     } = validation;
     try {
-        // throw an sql error on purpose
+        // Fetch the records from the database based on the given
+        // params, paginate them, map the player data, and return
+        // the response
         const { records, totalRecords } = await fetchRecordsFromDatabase(
             categoryId,
             category,
@@ -187,13 +228,9 @@ export const GET = async (request: NextRequest) => {
             .setTotalItems(totalRecords)
             .getPage(page, async () => mapPlayerData(records));
 
-        const time: number = Date.now() - before;
-        console.log(
-            `[API::fetchRecords] Total time spent was ${time}ms fetching records`
-        );
         return Response.json({
             ...paginatedPage,
-            time,
+            time: performance.now() - before,
         });
     } catch (error) {
         // Handle specific errors
@@ -206,6 +243,10 @@ export const GET = async (request: NextRequest) => {
         return Response.json(
             { error: "Internal Server Error" },
             { status: 500 }
+        );
+    } finally {
+        console.log(
+            `[API::fetchRecords] Total time spent was ${performance.now() - before}ms fetching records`
         );
     }
 };

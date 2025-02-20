@@ -1,7 +1,7 @@
 import type { MySqlTableWithColumns } from "drizzle-orm/mysql-core";
 import type { LucideProps } from "lucide-react";
-import { Footprints, Hammer, Scroll, Speaker, VolumeOff } from "lucide-react";
-import { type ReactElement } from "react";
+import { Footprints, Hammer, Scroll, VolumeOff } from "lucide-react";
+import type { ReactElement } from "react";
 import {
     banPunishmentRecords,
     kickPunishmentRecords,
@@ -9,10 +9,8 @@ import {
     warningPunishmentRecords,
 } from "~/server/drizzle/schema";
 
-export type PunishmentCategory = Record<
-    "ban" | "mute" | "warning" | "kick",
-    PunishmentCategoryInfo
->;
+// Core types
+export type PunishmentType = "ban" | "mute" | "warning" | "kick";
 
 export type PunishmentCategoryInfo = {
     displayName: string;
@@ -20,6 +18,13 @@ export type PunishmentCategoryInfo = {
     table: MySqlTableWithColumns<any>;
 };
 
+export type TypedPunishmentCategoryInfo = {
+    type: PunishmentType;
+} & PunishmentCategoryInfo;
+
+export type PunishmentCategory = Record<PunishmentType, PunishmentCategoryInfo>;
+
+// Constants
 export const PUNISHMENT_CATEGORIES: PunishmentCategory = {
     ban: {
         displayName: "Ban",
@@ -41,36 +46,32 @@ export const PUNISHMENT_CATEGORIES: PunishmentCategory = {
         icon: <Footprints />,
         table: kickPunishmentRecords,
     },
-};
+} as const;
 
-export type PunishmentType = keyof PunishmentCategory;
-
-export const PUNISHMENT_TYPES = Object.keys(
+export const PUNISHMENT_TYPES: PunishmentType[] = Object.keys(
     PUNISHMENT_CATEGORIES
 ) as PunishmentType[];
 
+// Utility functions
 /**
- * Get a category by its name.
- *
- * @param name the name of the category
+ * Get a punishment category by its name.
+
+ * @param name the name of the category to retrieve
+ * @returns the category info if found, undefined otherwise
  */
 export const getPunishmentCategory = (
     name: string
-): PunishmentCategoryInfo | undefined => {
-    return name in PUNISHMENT_CATEGORIES
-        ? PUNISHMENT_CATEGORIES[name as PunishmentType]
-        : undefined;
-};
+): PunishmentCategoryInfo | undefined =>
+    PUNISHMENT_CATEGORIES[name as PunishmentType];
 
 /**
- * Get all punishment categories.
+ * Get all punishment categories with their corresponding types.
+ *
+ * @returns An array of punishment categories with their types
  */
-export const getAllPunishmentCategories = (): Array<
-    {
-        type: PunishmentType;
-    } & PunishmentCategoryInfo
-> =>
-    PUNISHMENT_TYPES.map((type: PunishmentType) => ({
-        type,
-        ...PUNISHMENT_CATEGORIES[type],
-    }));
+export const getAllPunishmentCategories =
+    (): Array<TypedPunishmentCategoryInfo> =>
+        PUNISHMENT_TYPES.map((type: PunishmentType) => ({
+            type,
+            ...PUNISHMENT_CATEGORIES[type],
+        }));
