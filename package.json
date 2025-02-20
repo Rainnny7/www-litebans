@@ -48,7 +48,7 @@
         "react-day-picker": "^9.5.1",
         "react-dom": "^19.0.0",
         "restfulmc-lib": "^1.1.4",
-        "sonner": "^1.7.4",
+        "sonner": "^2.0.1",
         "tailwind-merge": "^3.0.1",
         "tailwindcss-animate": "^1.0.7",
         "tailwindcss-animated": "^2.0.0",
