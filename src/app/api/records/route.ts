@@ -2,10 +2,10 @@ import { auth } from "@clerk/nextjs/server";
 import { asc, count, desc, eq, or } from "drizzle-orm";
 import { forbidden, notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
+import { fetchPlayerData } from "~/actions/fetch-player";
 import { isAuthorized } from "~/actions/is-authorized";
 import { db } from "~/common/drizzle";
 import { Paginator } from "~/common/paginator";
-import { fetchPlayerData } from "~/common/player";
 import { trackRecordFetch } from "~/common/umami";
 import { getPunishmentCategory } from "~/types/punishment-category";
 import {

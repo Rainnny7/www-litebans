@@ -7,6 +7,24 @@ import {
     varchar,
 } from "drizzle-orm/mysql-core";
 
+/**
+ * The history records table.
+ * <p>
+ * This table stores the history of all
+ * player UUIDs, usernames, and IP addresses.
+ * </p>
+ */
+export const historyRecords = mysqlTable("litebans_history", {
+    id: bigint("id", { mode: "number", unsigned: true }).notNull(),
+    date: timestamp("date").notNull().defaultNow().onUpdateNow(),
+    name: varchar("name", { length: 16 }).notNull(),
+    uuid: varchar("uuid", { length: 36 }).notNull(),
+    ip: varchar("ip", { length: 45 }).notNull(),
+});
+
+/**
+ * The ban punishment records table.
+ */
 export const banPunishmentRecords = mysqlTable("litebans_bans", {
     id: bigint("id", { mode: "number", unsigned: true }).notNull(),
     uuid: varchar("uuid", { length: 36 }),
@@ -32,6 +50,9 @@ export const banPunishmentRecords = mysqlTable("litebans_bans", {
     template: tinyint("template").notNull().default(255),
 });
 
+/**
+ * The mute punishment records table.
+ */
 export const mutePunishmentRecords = mysqlTable("litebans_mutes", {
     id: bigint("id", { mode: "number", unsigned: true }).notNull(),
     uuid: varchar("uuid", { length: 36 }),
@@ -57,6 +78,9 @@ export const mutePunishmentRecords = mysqlTable("litebans_mutes", {
     template: tinyint("template").notNull().default(255),
 });
 
+/**
+ * The warning punishment records table.
+ */
 export const warningPunishmentRecords = mysqlTable("litebans_warnings", {
     id: bigint("id", { mode: "number", unsigned: true }).notNull(),
     uuid: varchar("uuid", { length: 36 }),
@@ -83,6 +107,9 @@ export const warningPunishmentRecords = mysqlTable("litebans_warnings", {
     template: tinyint("template").notNull().default(255),
 });
 
+/**
+ * The kick punishment records table.
+ */
 export const kickPunishmentRecords = mysqlTable("litebans_kicks", {
     id: bigint("id", { mode: "number", unsigned: true }).notNull(),
     uuid: varchar("uuid", { length: 36 }),
