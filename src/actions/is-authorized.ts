@@ -7,6 +7,16 @@ import { redis } from "~/server/redis";
 
 const DISCORD_ROLE_CACHE_TTL = 300; // 5 minutes
 
+/**
+ * Check if a user is authorized.
+ * <p>
+ * This is done by checking if they
+ * have the required role on Discord.
+ * </p>
+ *
+ * @param userId the id of the user
+ * @returns whether the user is authorized
+ */
 export const isAuthorized = async ({
     userId,
 }: {

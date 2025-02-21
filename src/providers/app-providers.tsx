@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ViewTransitions } from "next-view-transitions";
 import { useEffect, type ReactElement, type ReactNode } from "react";
 import { TooltipProvider } from "~/components/ui/tooltip";
+import AuthProvider from "~/providers/auth-provider";
 
 const queryClient = new QueryClient();
 
@@ -35,9 +36,11 @@ const AppProviders = ({ children }: { children: ReactNode }): ReactElement => {
     return (
         <QueryClientProvider client={queryClient}>
             <ClerkProvider appearance={{ baseTheme: clerkDarkMode }}>
-                <TooltipProvider delayDuration={100}>
-                    <ViewTransitions>{children}</ViewTransitions>
-                </TooltipProvider>
+                <AuthProvider>
+                    <TooltipProvider delayDuration={100}>
+                        <ViewTransitions>{children}</ViewTransitions>
+                    </TooltipProvider>
+                </AuthProvider>
             </ClerkProvider>
         </QueryClientProvider>
     );

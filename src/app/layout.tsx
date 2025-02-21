@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import type { ReactElement, ReactNode } from "react";
 import { cn } from "~/common/utils";
-import AppProviders from "~/components/app-providers";
+import AppProviders from "~/providers/app-providers";
 import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";

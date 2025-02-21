@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 
+/**
+ * The screen sizes.
+ */
 export enum ScreenSize {
     ExtraSmall = 475,
     Small = 640,
@@ -9,7 +12,14 @@ export enum ScreenSize {
     ExtraExtraLarge = 1536,
 }
 
-export const useIsMobile = (size = ScreenSize.Medium) => {
+/**
+ * A hook to check if the screen
+ * size is a given size or larger.
+ *
+ * @param size the size to check
+ * @returns whether the screen size is the same or larger
+ */
+export const useIsScreenSize = (size = ScreenSize.Medium): boolean => {
     const [isMobile, setIsMobile] = useState<boolean>(false);
 
     useEffect(() => {
