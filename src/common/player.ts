@@ -18,11 +18,10 @@ export const fetchPlayerData = async (
     if (uuid === "CONSOLE" || isBedrockUuid(uuid)) return undefined;
     return await fetchWithCache(playerCache, `player:${uuid}`, async () => {
         try {
-            const before = Date.now();
+            const before = performance.now();
             const player: CachedPlayer = await getPlayer(uuid);
-            const after = Date.now();
             console.log(
-                `[API::fetchPlayerData] Took ${after - before}ms for ${uuid}`
+                `[API::fetchPlayerData] Took ${performance.now() - before}ms for ${uuid}`
             );
             return {
                 uuid: player.uniqueId,

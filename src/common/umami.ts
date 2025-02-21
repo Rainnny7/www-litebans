@@ -1,5 +1,5 @@
 import umami from "@umami/node";
-import { env, isProd, isUsingAnalytics } from "~/env";
+import { env, isUsingAnalytics } from "~/env";
 
 /**
  * Cache the umami instance in development. This
@@ -23,7 +23,7 @@ if (isUsingAnalytics && !globalForUmami.initialized) {
  * @param category The category of the records fetched.
  */
 export const trackRecordFetch = (category: string) => {
-    if (isProd && isUsingAnalytics) {
+    if (isUsingAnalytics) {
         umami.track(`${category} Records Fetched`);
     }
 };

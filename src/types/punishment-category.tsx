@@ -7,7 +7,7 @@ import {
     kickPunishmentRecords,
     mutePunishmentRecords,
     warningPunishmentRecords,
-} from "~/server/drizzle/schema";
+} from "~/common/drizzle/schema";
 
 // Core types
 export type PunishmentType = "ban" | "mute" | "warning" | "kick";

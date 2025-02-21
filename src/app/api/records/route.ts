@@ -3,10 +3,10 @@ import { asc, count, desc, eq, or } from "drizzle-orm";
 import { forbidden, notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
 import { isAuthorized } from "~/actions/is-authorized";
+import { db } from "~/common/drizzle";
 import { Paginator } from "~/common/paginator";
 import { fetchPlayerData } from "~/common/player";
-import { db } from "~/server/drizzle";
-import { trackRecordFetch } from "~/server/umami";
+import { trackRecordFetch } from "~/common/umami";
 import { getPunishmentCategory } from "~/types/punishment-category";
 import {
     type BasePunishmentRecord,
