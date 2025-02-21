@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { AppCache, fetchWithCache } from "~/common/cache";
 import { db } from "~/common/drizzle";
 import { historyRecords } from "~/common/drizzle/schema";
-import { isBedrockUuid } from "~/common/player";
+import { isBedrockUuid, STEVE_AVATAR } from "~/common/player";
 import { type TablePlayerData } from "~/types/punishment-record";
 
 const playerCache = new AppCache({
@@ -15,7 +15,7 @@ const playerCache = new AppCache({
 export const fetchPlayerData = async (
     uuid: string
 ): Promise<TablePlayerData | undefined> => {
-    if (uuid === "CONSOLE" || isBedrockUuid(uuid)) return undefined;
+    if (uuid === "CONSOLE") return undefined;
     return await fetchWithCache(playerCache, `player:${uuid}`, async () => {
         try {
             const before = performance.now();
@@ -33,7 +33,9 @@ export const fetchPlayerData = async (
             return {
                 uuid,
                 username: player.name,
-                avatar: `https://api.restfulmc.cc/player/head/${uuid}.png`,
+                avatar: isBedrockUuid(uuid)
+                    ? STEVE_AVATAR
+                    : `https://api.restfulmc.cc/player/head/${uuid}.png`,
             };
         } catch (err) {
             return undefined;
