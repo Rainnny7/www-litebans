@@ -97,7 +97,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
             const colorReason = (truncate: boolean) =>
                 reason
                     ? formatMinecraftString(
-                          truncate ? truncateText(reason, 52) : reason
+                          truncate ? truncateText(reason, 32) : reason
                       )
                     : "No reason specified";
             return (
