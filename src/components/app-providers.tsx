@@ -9,10 +9,20 @@ import { TooltipProvider } from "~/components/ui/tooltip";
 
 const queryClient = new QueryClient();
 
+/**
+ * The app providers for this app.
+ * <p>
+ * This is a wrapper component that provides the app with the
+ * necessary providers for the app to function properly.
+ * </p>
+ *
+ * @param children the children to render
+ * @returns the children
+ */
 const AppProviders = ({ children }: { children: ReactNode }): ReactElement => {
+    // Only prevent default if not triggered from a custom context menu
     useEffect(() => {
         const handleContextMenu = (event: MouseEvent) => {
-            // Only prevent default if not triggered from a custom context menu
             if (!(event.target as HTMLElement).closest('[role="menu"]')) {
                 event.preventDefault();
             }

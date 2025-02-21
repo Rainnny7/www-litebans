@@ -28,12 +28,15 @@ import {
     PopoverTrigger,
 } from "~/components/ui/popover";
 
+/**
+ * The pagination control props.
+ */
 type PaginationControlsProps = {
     responseTime: number;
     page: Page<any> | undefined;
     loading: boolean;
-    setPage: (page: number) => void;
     rowsPerPage: number;
+    setPage: (page: number) => void;
     onRowsPerPageChange: (value: string) => void;
 };
 
@@ -41,8 +44,8 @@ const PaginationControls = ({
     responseTime,
     page,
     loading,
-    setPage,
     rowsPerPage,
+    setPage,
     onRowsPerPageChange,
 }: PaginationControlsProps): ReactElement => {
     const pageNumber: number = page?.metadata.page ?? 1;

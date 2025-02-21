@@ -318,10 +318,10 @@ const RecordsTable = ({
                 {!error && (
                     <PaginationControls
                         responseTime={records?.time ?? 0}
-                    page={records}
+                        page={records}
                         loading={loading}
-                        setPage={handlePageChange}
                         rowsPerPage={itemsPerPage}
+                        setPage={handlePageChange}
                         onRowsPerPageChange={(value: string) => {
                             setItemsPerPage(parseInt(value));
                             handlePageChange(1);
