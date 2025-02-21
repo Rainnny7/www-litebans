@@ -2,7 +2,7 @@ import type { ClerkMiddlewareAuth } from "@clerk/nextjs/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { checkDiscordRole } from "~/common/auth";
+import { isAuthorized } from "~/actions/is-authorized";
 
 const isForbiddenRoute = createRouteMatcher(["/forbidden"]);
 
@@ -21,7 +21,7 @@ export default clerkMiddleware(
         }
         // Otherwise, get the user from the Clerk client and
         // check to see if they have the allowed role in Discord.
-        if (!(await checkDiscordRole({ userId }))) {
+        if (!(await isAuthorized({ userId }))) {
             return NextResponse.redirect(new URL("/forbidden", req.url));
         }
     }

@@ -1,3 +1,5 @@
+"use server";
+
 import { type ClerkClient } from "@clerk/backend";
 import { clerkClient } from "@clerk/nextjs/server";
 import { env } from "~/env";
@@ -5,7 +7,7 @@ import { redis } from "~/server/redis";
 
 const DISCORD_ROLE_CACHE_TTL = 300; // 5 minutes
 
-export const checkDiscordRole = async ({
+export const isAuthorized = async ({
     userId,
 }: {
     userId: string;

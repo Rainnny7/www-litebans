@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { asc, count, desc, eq, or } from "drizzle-orm";
 import { forbidden, notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
-import { checkDiscordRole } from "~/common/auth";
+import { isAuthorized } from "~/actions/is-authorized";
 import { Paginator } from "~/common/paginator";
 import { fetchPlayerData } from "~/common/player";
 import { db } from "~/server/drizzle";
@@ -29,7 +29,7 @@ import {
 async function validateRequest(request: NextRequest) {
     // Ensure the user is authenticated
     const { userId } = await auth();
-    if (!userId || !(await checkDiscordRole({ userId }))) {
+    if (!userId || !(await isAuthorized({ userId }))) {
         forbidden();
     }
 

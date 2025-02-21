@@ -1,11 +1,10 @@
 import { UserButton } from "@clerk/nextjs";
-import { currentUser, type User } from "@clerk/nextjs/server";
 import { count } from "drizzle-orm";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
 import { cloneElement, type ReactElement } from "react";
-import { checkDiscordRole } from "~/common/auth";
 import { numberWithCommas } from "~/common/utils";
+import Protected from "~/components/auth/protected";
 import ServerStatus from "~/components/server-status";
 import { Badge } from "~/components/ui/badge";
 import { env } from "~/env";
@@ -16,9 +15,6 @@ import {
 } from "~/types/punishment-category";
 
 const Navbar = async (): Promise<ReactElement> => {
-    const user: User | null = await currentUser();
-    const isAuthorized = user && (await checkDiscordRole({ userId: user.id }));
-
     /**
      * Fetch the record count for the given category.
      *
@@ -71,51 +67,45 @@ const Navbar = async (): Promise<ReactElement> => {
                 </Link>
 
                 {/* Categories */}
-                {isAuthorized && (
+                <Protected>
                     <div className="flex gap-2 sm:gap-3 items-center transition-all transform-gpu">
-                        {isAuthorized &&
-                            (
-                                await Promise.all(
-                                    getAllPunishmentCategories().map(
-                                        (category) =>
-                                            fetchCategoryCount(category)
-                                    )
+                        {(
+                            await Promise.all(
+                                getAllPunishmentCategories().map((category) =>
+                                    fetchCategoryCount(category)
                                 )
-                            ).map(({ category, count, error }) => (
-                                <Link
-                                    key={category.type}
-                                    className="px-2.5 py-1 flex gap-2 items-center bg-muted/40 text-sm rounded-lg hover:opacity-75 transition-all transform-gpu"
-                                    href={`/records/${category.type}`}
-                                    prefetch={false}
-                                    draggable={false}
-                                >
-                                    {cloneElement(category.icon, {
-                                        className: "hidden lg:flex size-3.5",
-                                    })}
+                            )
+                        ).map(({ category, count, error }) => (
+                            <Link
+                                key={category.type}
+                                className="px-2.5 py-1 flex gap-2 items-center bg-muted/40 text-sm rounded-lg hover:opacity-75 transition-all transform-gpu"
+                                href={`/records/${category.type}`}
+                                prefetch={false}
+                                draggable={false}
+                            >
+                                {cloneElement(category.icon, {
+                                    className: "hidden lg:flex size-3.5",
+                                })}
 
-                                    <span>{category.displayName}s</span>
-                                    <Badge
-                                        className="hidden md:flex px-2"
-                                        variant={
-                                            error ? "destructive" : "outline"
-                                        }
-                                        title={error ?? undefined}
-                                    >
-                                        {error
-                                            ? "Error"
-                                            : numberWithCommas(count)}
-                                    </Badge>
-                                </Link>
-                            ))}
+                                <span>{category.displayName}s</span>
+                                <Badge
+                                    className="hidden md:flex px-2"
+                                    variant={error ? "destructive" : "outline"}
+                                    title={error ?? undefined}
+                                >
+                                    {error ? "Error" : numberWithCommas(count)}
+                                </Badge>
+                            </Link>
+                        ))}
                     </div>
-                )}
+                </Protected>
             </div>
 
             {/* Right */}
             <div className="my-auto flex gap-4 items-center">
-                {isAuthorized && env.NEXT_PUBLIC_MINECRAFT_SERVER_IP && (
-                    <ServerStatus />
-                )}
+                <Protected>
+                    {env.NEXT_PUBLIC_MINECRAFT_SERVER_IP && <ServerStatus />}
+                </Protected>
                 <UserButton />
             </div>
         </nav>
