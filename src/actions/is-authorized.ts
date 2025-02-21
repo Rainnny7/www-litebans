@@ -31,67 +31,62 @@ export const isAuthorized = async ({
     console.log(
         `[Action::isAuthorized] Checking if user ${userId} is authorized...`
     );
-    const isAuthorized: boolean = (
-        await fetchWithCache(
-            roleMemoryCache,
-            `discord-roles:${userId}`,
-            async () => {
-                const redisCacheKey = `www-litebans:discord-roles:${userId}`;
+    const roles = await fetchWithCache(
+        roleMemoryCache,
+        `discord-roles:${userId}`,
+        async () => {
+            const redisCacheKey = `www-litebans:discord-roles:${userId}`;
 
-                // Before reaching out to Discord, check the cache.
-                const cachedRoles: string[] =
-                    await redis.smembers(redisCacheKey);
-                if (cachedRoles && cachedRoles.length > 0) {
-                    return cachedRoles;
-                }
-
-                // Fetch the user's Discord roles from the API.
-                const client: ClerkClient = await clerkClient();
-
-                // Get the Discord access token for the user, if any.
-                const accessTokens = await client.users.getUserOauthAccessToken(
-                    userId,
-                    "discord"
-                );
-                if (!accessTokens || accessTokens.totalCount < 1) {
-                    return false;
-                }
-                const accessToken = accessTokens.data.at(0);
-
-                // Get the Discord guild membership for the user.
-                const membershipResponse: Response = await fetch(
-                    `https://discord.com/api/users/@me/guilds/${env.CLERK_REQUIRED_GUILD_ID}/member`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${accessToken?.token}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-                if (!membershipResponse.ok) {
-                    return false;
-                }
-                const roles = (await membershipResponse.json()).roles;
-
-                // Before returning the result, cache it.
-                if (roles && roles.length > 0) {
-                    const pipeline = redis.pipeline();
-                    for (const role of roles) {
-                        pipeline.sadd(redisCacheKey, role);
-                    }
-                    pipeline.expire(redisCacheKey, DISCORD_ROLE_CACHE_TTL);
-                    await pipeline.exec();
-                }
-
-                return roles;
+            // Before reaching out to Discord, check the cache.
+            const cachedRoles: string[] = await redis.smembers(redisCacheKey);
+            if (cachedRoles && cachedRoles.length > 0) {
+                return cachedRoles;
             }
-        )
-    ).includes(env.CLERK_REQUIRED_ROLE_ID);
 
+            // Fetch the user's Discord roles from the API.
+            const client: ClerkClient = await clerkClient();
+
+            // Get the Discord access token for the user, if any.
+            const accessTokens = await client.users.getUserOauthAccessToken(
+                userId,
+                "discord"
+            );
+            if (!accessTokens || accessTokens.totalCount < 1) {
+                return [];
+            }
+            const accessToken = accessTokens.data.at(0);
+
+            // Get the Discord guild membership for the user.
+            const membershipResponse: Response = await fetch(
+                `https://discord.com/api/users/@me/guilds/${env.CLERK_REQUIRED_GUILD_ID}/member`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken?.token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            if (!membershipResponse.ok) {
+                return [];
+            }
+            const roles = (await membershipResponse.json()).roles;
+
+            // Before returning the result, cache it.
+            if (roles && roles.length > 0) {
+                const pipeline = redis.pipeline();
+                for (const role of roles) {
+                    pipeline.sadd(redisCacheKey, role);
+                }
+                pipeline.expire(redisCacheKey, DISCORD_ROLE_CACHE_TTL);
+                await pipeline.exec();
+            }
+            return roles;
+        }
+    );
     console.log(
         `[Action::isAuthorized] Took ${performance.now() - before}ms to check if user ${userId} is authorized`
     );
-    return isAuthorized;
+    return roles?.includes(env.CLERK_REQUIRED_ROLE_ID);
 };
 
 // /**
