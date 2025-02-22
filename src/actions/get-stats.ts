@@ -42,7 +42,6 @@ export const getStats = async (): Promise<InstanceStats> => {
 
     return {
         uniquePlayers,
-        servers: 777,
         categoryStats,
     };
 };

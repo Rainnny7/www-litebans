@@ -1,7 +1,10 @@
 import { currentUser, type User } from "@clerk/nextjs/server";
 import { forbidden } from "next/navigation";
 import type { ReactElement } from "react";
-import GlobalsStats from "~/components/home/globals-stats";
+import GlobalsStats from "~/components/dashboard/globals-stats";
+import RecentRecords from "~/components/dashboard/recent-records";
+import { Separator } from "~/components/ui/separator";
+import { Skeleton } from "~/components/ui/skeleton";
 
 /**
  * The dashboard page of the app.
@@ -27,6 +30,11 @@ const DashboardPage = async (): Promise<ReactElement> => {
 
             {/* Content */}
             <GlobalsStats />
+            <Separator />
+            <div className="w-full h-64 flex gap-4">
+                <Skeleton className="w-full" />
+                <RecentRecords />
+            </div>
         </div>
     );
 };

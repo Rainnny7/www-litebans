@@ -1,25 +1,26 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { CircleHelp, LucideProps, Server, Users } from "lucide-react";
+import { CircleHelp, LucideProps, Users } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { cloneElement, ReactElement } from "react";
 import { getStats } from "~/actions/get-stats";
 import { capitalizeWords } from "~/common/string";
-import { numberWithCommas } from "~/common/utils";
+import { cn, numberWithCommas } from "~/common/utils";
+import DashboardCard from "~/components/dashboard/dashboard-card";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
     getPunishmentCategory,
     PUNISHMENT_TYPES,
 } from "~/types/punishment-category";
 
-const GlobalsStats = () => {
+const GlobalsStats = (): ReactElement => {
     const { data: stats } = useQuery({
         queryKey: ["instance-stats"],
         queryFn: getStats,
     });
     return (
-        <div className="flex gap-3 justify-center items-center">
+        <div className="flex flex-wrap xl:flex-nowrap gap-3 justify-center items-center">
             <Stat
                 name="Unique Players"
                 description="The total number of players."
@@ -27,12 +28,6 @@ const GlobalsStats = () => {
                 value={
                     stats ? numberWithCommas(stats.uniquePlayers) : undefined
                 }
-            />
-            <Stat
-                name="Servers"
-                description="The total number of servers."
-                icon={<Server />}
-                value={stats?.servers}
             />
 
             {/* Category Stats */}
@@ -67,10 +62,16 @@ const Stat = ({
     description: string;
     icon: ReactElement<LucideProps>;
     value: any;
-    href?: string;
-}) => {
-    const card: ReactElement = (
-        <div className="relative p-3 w-48 h-28 flex justify-between bg-muted/50 border border-muted/20 rounded-lg">
+    href?: string | undefined;
+}) => (
+    <Link
+        className={cn(
+            "cursor-default",
+            href && "hover:opacity-75 transition-all transform-gpu"
+        )}
+        href={href ?? "#"}
+    >
+        <DashboardCard className="relative w-44 sm:w-52 xl:w-[14.65rem] h-28 justify-between">
             {/* Name & Value */}
             <div className="flex flex-col gap-1.5">
                 <h1 className="font-medium">{name}</h1>
@@ -93,18 +94,8 @@ const Stat = ({
                 className:
                     "absolute top-3 right-3 size-5 text-muted-foreground",
             })}
-        </div>
-    );
-    return href ? (
-        <Link
-            className="hover:opacity-75 cursor-default transition-all transform-gpu"
-            href={href}
-        >
-            {card}
-        </Link>
-    ) : (
-        card
-    );
-};
+        </DashboardCard>
+    </Link>
+);
 
 export default GlobalsStats;

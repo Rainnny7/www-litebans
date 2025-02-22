@@ -11,11 +11,6 @@ export type InstanceStats = {
     uniquePlayers: number;
 
     /**
-     * The amount of servers on the instance.
-     */
-    servers: number;
-
-    /**
      * The amount of records per-category.
      */
     categoryStats: Record<PunishmentType, number>;
