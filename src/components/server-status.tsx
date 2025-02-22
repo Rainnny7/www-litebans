@@ -52,7 +52,7 @@ const ServerStatus = (): ReactElement => {
             prefix={
                 <span className="flex gap-2 items-center">
                     <Image
-                        src={env.NEXT_PUBLIC_APP_LOGO}
+                        src={status.favicon?.url ?? env.NEXT_PUBLIC_APP_LOGO}
                         alt={`${env.NEXT_PUBLIC_APP_NAME} Logo`}
                         width={16}
                         height={16}
