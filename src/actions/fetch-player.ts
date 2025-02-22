@@ -1,9 +1,7 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
-import { forbidden } from "next/navigation";
-import { isAuthorized } from "~/actions/is-authorized";
+import { handleAuthCheck } from "~/common/auth";
 import { AppCache, fetchWithCache } from "~/common/cache";
 import { db } from "~/common/drizzle";
 import { historyRecords } from "~/common/drizzle/schema";
@@ -29,12 +27,7 @@ export const fetchPlayerData = async (
 ): Promise<TablePlayerData | undefined> => {
     const isUuid: boolean = query.length === 36;
     if (query === "CONSOLE") return undefined;
-
-    // Check if the user is authorized
-    const { userId } = await auth();
-    if (!userId || !(await isAuthorized({ userId }))) {
-        forbidden();
-    }
+    await handleAuthCheck(); // Ensure the user is authorized
 
     return await fetchWithCache(playerCache, `player:${query}`, async () => {
         try {

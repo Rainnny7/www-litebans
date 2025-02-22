@@ -28,6 +28,7 @@ export const env = createEnv({
         // App
         NEXT_PUBLIC_APP_NAME: z.string(),
         NEXT_PUBLIC_APP_DESCRIPTION: z.string(),
+        NEXT_PUBLIC_APP_URL: z.string(),
         NEXT_PUBLIC_APP_LOGO: z.string(),
         NEXT_PUBLIC_BUILD_ID: z.string(),
         NEXT_PUBLIC_BUILD_TIME: z.string(),
@@ -46,6 +47,7 @@ export const env = createEnv({
         // App
         NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
         NEXT_PUBLIC_APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
+        NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
         NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
         NEXT_PUBLIC_BUILD_ID: process.env.SOURCE_COMMIT?.slice(0, 7) ?? "dev",
         NEXT_PUBLIC_BUILD_TIME: toDateTime(DateTime.now()),

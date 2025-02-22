@@ -37,7 +37,7 @@ const AppProviders = ({ children }: { children: ReactNode }): ReactElement => {
         <QueryClientProvider client={queryClient}>
             <ClerkProvider appearance={{ baseTheme: clerkDarkMode }}>
                 <AuthProvider>
-                    <TooltipProvider delayDuration={100}>
+                    <TooltipProvider delayDuration={300}>
                         <ViewTransitions>{children}</ViewTransitions>
                     </TooltipProvider>
                 </AuthProvider>

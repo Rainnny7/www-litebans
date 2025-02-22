@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { type ColumnDef, type SortingState } from "@tanstack/react-table";
-import { Info, LoaderCircle } from "lucide-react";
+import { Info, LoaderCircle, Share } from "lucide-react";
 import { DateTime } from "luxon";
 import {
     type ChangeEvent,
@@ -24,6 +24,7 @@ import RecordContextMenu from "~/components/record/record-context-menu";
 import RecordDialog from "~/components/record/record-dialog";
 import RecordSkeleton from "~/components/record/record-skeleton";
 import RecordStatus from "~/components/record/record-status";
+import ShareRecordDialog from "~/components/record/share-record-dialog";
 import SimpleTooltip from "~/components/simple-tooltip";
 import { Button } from "~/components/ui/button";
 import { DataTable } from "~/components/ui/data-table";
@@ -141,12 +142,28 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         size: 20,
         enableSorting: false,
         cell: ({ row }) => (
-            <div className="flex justify-center">
-                <SimpleTooltip content="More Info">
-                    <div className="flex items-center">
+            <div className="flex gap-2 justify-center">
+                {/* Share */}
+                <SimpleTooltip content="Share Record">
+                    <div>
+                        <ShareRecordDialog record={row.original}>
+                            <Button
+                                className="size-4 hover:opacity-75 transition-all transform-gpu"
+                                variant="ghost"
+                                size="icon"
+                            >
+                                <Share className="size-2.5 text-muted-foreground hover:text-foreground transition-all transform-gpu" />
+                            </Button>
+                        </ShareRecordDialog>
+                    </div>
+                </SimpleTooltip>
+
+                {/* More Info */}
+                <SimpleTooltip content="View Details">
+                    <div>
                         <RecordDialog record={row.original}>
                             <Button
-                                className="size-4 cursor-pointer"
+                                className="size-4 hover:opacity-75 transition-all transform-gpu"
                                 variant="ghost"
                                 size="icon"
                             >

@@ -32,8 +32,9 @@ const RecordSkeleton = ({
         <TableCell>
             <Skeleton className="w-[4.1rem] h-5" />
         </TableCell>
-        <TableCell className="flex justify-center">
-            <Skeleton className="w-[22px] h-[22px] rounded-sm" />
+        <TableCell className="flex justify-center gap-2 items-center">
+            <Skeleton className="w-[20px] h-[20px] rounded-sm" />
+            <Skeleton className="w-[20px] h-[20px] rounded-full" />
         </TableCell>
     </TableRow>
 );

@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { asc, count, desc, eq, or } from "drizzle-orm";
-import { forbidden, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { type NextRequest } from "next/server";
 import { fetchPlayerData } from "~/actions/fetch-player";
 import { isAuthorized } from "~/actions/is-authorized";
+import { handleAuthCheck } from "~/common/auth";
 import { db } from "~/common/drizzle";
 import { Paginator } from "~/common/paginator";
 import { trackRecordFetch } from "~/common/umami";
@@ -31,11 +32,7 @@ import {
  * @returns the error response, or request data
  */
 async function validateRequest(request: NextRequest) {
-    // Ensure the user is authenticated
-    const { userId } = await auth();
-    if (!userId || !(await isAuthorized({ userId }))) {
-        forbidden();
-    }
+    await handleAuthCheck(); // Ensure the user is authorized
 
     // Get the request params
     const { searchParams } = new URL(request.url);

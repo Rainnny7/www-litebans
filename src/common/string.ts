@@ -23,15 +23,25 @@ const MINECRAFT_COLORS: Record<string, string> = {
     f: "#FFFFFF", // White
 };
 
-const TIME_UNITS: Array<{ unit: string; ms: number }> = [
-    { unit: "y", ms: 31536000000 },
-    { unit: "mo", ms: 2592000000 },
-    { unit: "d", ms: 86400000 },
-    { unit: "h", ms: 3600000 },
-    { unit: "m", ms: 60000 },
-    { unit: "s", ms: 1000 },
-    { unit: "ms", ms: 1 },
+type TimeUnit = {
+    unit: string;
+    shortUnit: string;
+    ms: number;
+};
+
+const TIME_UNITS: TimeUnit[] = [
+    { unit: "year", shortUnit: "y", ms: 31536000000 },
+    { unit: "month", shortUnit: "mo", ms: 2592000000 },
+    { unit: "day", shortUnit: "d", ms: 86400000 },
+    { unit: "hour", shortUnit: "h", ms: 3600000 },
+    { unit: "minute", shortUnit: "m", ms: 60000 },
+    { unit: "second", shortUnit: "s", ms: 1000 },
+    { unit: "millisecond", shortUnit: "ms", ms: 1 },
 ];
+
+const ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const NUMERIC_STRING = "0123456789";
+const SPECIAL_STRING = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
 /**
  * Capitalize the first letter of
@@ -55,6 +65,43 @@ export const truncateText = (text: string, maxLength: number): string =>
     text.length > maxLength
         ? text.slice(0, maxLength - 3).trim() + "..."
         : text;
+
+/**
+ * Generate a random string with the given length.
+ *
+ * @param length the length of the string
+ * @param alphabet whether the string should contain alphabet characters
+ * @param numeric whether the string should contain numeric characters
+ * @param special whether the string should contain special characters
+ * @returns the generated random string
+ */
+export function generateRandom(
+    length: number,
+    alphabet: boolean = true,
+    numeric: boolean = true,
+    special: boolean = false
+): string {
+    if (length < 1) {
+        throw new Error("Length must be at least 1");
+    }
+    if (!alphabet && !numeric && !special) {
+        throw new Error(
+            "At least one of alphabet, numeric, or special must be true"
+        );
+    }
+
+    // Build the symbols string
+    let symbols = "";
+    if (alphabet) symbols += ALPHABET_STRING;
+    if (numeric) symbols += NUMERIC_STRING;
+    if (special) symbols += SPECIAL_STRING;
+
+    // Generate the random string
+    return Array(length)
+        .fill("")
+        .map(() => symbols.charAt(Math.floor(Math.random() * symbols.length)))
+        .join("");
+}
 
 /**
  * Convert a Minecraft formatted string to colored spans
@@ -91,18 +138,19 @@ export const formatMinecraftString = (text: string): ReactElement[] => {
  * Example: 1h 2m 3s
  *
  * @param time the duration to convert
+ * @param short whether to use the short unit names
  * @returns the human-readable string
  * @credit http://github.com/RealFascinated - lee xo
  */
-export const toHumanReadableTime = (time: number) => {
+export const toHumanReadableTime = (time: number, short = false) => {
     if (time < 0) time = -time;
     const result = [];
     let remainingMs = time;
 
-    for (const { unit, ms: unitMs } of TIME_UNITS) {
+    for (const { unit, shortUnit, ms: unitMs } of TIME_UNITS) {
         const count = Math.floor(remainingMs / unitMs);
         if (count > 0) {
-            result.push(`${count}${unit}`);
+            result.push(`${count}${short ? shortUnit : " " + unit}`);
             remainingMs -= count * unitMs;
         }
         // Stop after two units have been added

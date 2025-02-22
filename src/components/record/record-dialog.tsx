@@ -6,6 +6,7 @@ import {
     Fingerprint,
     Gavel,
     Server,
+    Share,
     Timer,
     type LucideProps,
 } from "lucide-react";
@@ -28,8 +29,10 @@ import {
 import { cn, copyWithToast, numberWithCommas } from "~/common/utils";
 import PlayerAvatar from "~/components/player-avatar";
 import RecordStatus from "~/components/record/record-status";
+import ShareRecordDialog from "~/components/record/share-record-dialog";
 import SimpleTooltip from "~/components/simple-tooltip";
 import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -84,6 +87,17 @@ const RecordDialog = ({ record, children }: RecordDialogProps) => (
                     <RecordRemovalInformation record={record} />
                 )}
             </div>
+
+            {/* Share */}
+            <SimpleTooltip content="Share Record">
+                <div className="absolute bottom-4 right-4">
+                    <ShareRecordDialog record={record}>
+                        <Button variant="ghost">
+                            <Share />
+                        </Button>
+                    </ShareRecordDialog>
+                </div>
+            </SimpleTooltip>
         </DialogContent>
     </Dialog>
 );
@@ -93,7 +107,7 @@ const PlayerInformation = ({ record }: { record: TablePunishmentRecord }) => (
         <h1 className="font-bold">Player Information</h1>
         <div className="mt-2.5 px-4 py-3.5 flex flex-col gap-2 justify-center border rounded-xl">
             {/* Avatar & Name */}
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-1.5 items-center">
                 <PlayerAvatar
                     avatar={record.player?.avatar ?? STEVE_AVATAR}
                     size={28}

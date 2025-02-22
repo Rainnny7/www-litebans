@@ -1,9 +1,7 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { count } from "drizzle-orm";
-import { forbidden } from "next/navigation";
-import { isAuthorized } from "~/actions/is-authorized";
+import { handleAuthCheck } from "~/common/auth";
 import { db } from "~/common/drizzle";
 import { historyRecords } from "~/common/drizzle/schema";
 import { InstanceStats } from "~/types/instance-stat";
@@ -21,11 +19,7 @@ import {
  * @returns the instance stats
  */
 export const getStats = async (): Promise<InstanceStats> => {
-    // Check if the user is authorized
-    const { userId } = await auth();
-    if (!userId || !(await isAuthorized({ userId }))) {
-        forbidden();
-    }
+    await handleAuthCheck(); // Ensure the user is authorized
 
     // Get the total number of unique players that have joined the server
     const uniquePlayers: number =

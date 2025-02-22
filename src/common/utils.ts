@@ -51,7 +51,7 @@ export const copyWithToast = async (
     text: string,
     toastText: string | ReactNode
 ) => {
-    await navigator.clipboard.writeText(text);
+    await copyToClipboard(text);
     toast.success(toastText, {
         description: text,
         action: {
@@ -62,6 +62,14 @@ export const copyWithToast = async (
         },
     });
 };
+
+/**
+ * Copy text to the clipboard.
+ *
+ * @param text the text to copy
+ */
+export const copyToClipboard = async (text: string) =>
+    await navigator.clipboard.writeText(text);
 
 /**
  * Format a response time in milliseconds to a human-readable string.
