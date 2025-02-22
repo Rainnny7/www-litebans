@@ -150,7 +150,7 @@ export const toHumanReadableTime = (time: number, short = false) => {
     for (const { unit, shortUnit, ms: unitMs } of TIME_UNITS) {
         const count = Math.floor(remainingMs / unitMs);
         if (count > 0) {
-            result.push(`${count}${short ? shortUnit : " " + unit}`);
+            result.push(`${count}${short ? shortUnit : " " + unit + "s"}`);
             remainingMs -= count * unitMs;
         }
         // Stop after two units have been added
