@@ -1,18 +1,25 @@
 import { UserButton } from "@clerk/nextjs";
 import { count } from "drizzle-orm";
+import { HomeIcon, UsersIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
-import { cloneElement, type ReactElement } from "react";
-import { numberWithCommas } from "~/common/utils";
-import Protected from "~/components/auth/protected";
-import ServerStatus from "~/components/server-status";
-import { Badge } from "~/components/ui/badge";
-import { env } from "~/env";
+import { type ReactElement } from "react";
 import { db } from "~/common/drizzle";
+import Protected from "~/components/auth/protected";
+import CategoriesDropdown from "~/components/navbar/categories-dropdown";
+import NavbarLinks from "~/components/navbar/navbar-links";
+import ServerStatus from "~/components/server-status";
+import { env } from "~/env";
 import {
     getAllPunishmentCategories,
     type TypedPunishmentCategoryInfo,
 } from "~/types/punishment-category";
+
+export type PunishmentCategoryWithCount = {
+    category: TypedPunishmentCategoryInfo;
+    count: number;
+    error: string | undefined;
+};
 
 const Navbar = async (): Promise<ReactElement> => {
     /**
@@ -23,7 +30,7 @@ const Navbar = async (): Promise<ReactElement> => {
      */
     const fetchCategoryCount = async (
         category: TypedPunishmentCategoryInfo
-    ) => {
+    ): Promise<PunishmentCategoryWithCount> => {
         try {
             const result = await db
                 .select({ count: count() })
@@ -43,8 +50,14 @@ const Navbar = async (): Promise<ReactElement> => {
         }
     };
 
+    const categories = await Promise.all(
+        getAllPunishmentCategories().map((category) =>
+            fetchCategoryCount(category)
+        )
+    );
+
     return (
-        <nav className="-mx-7 px-7 py-5 flex justify-between gap-3.5 items-center border-b border-muted">
+        <nav className="-mx-7 px-7 py-5 flex justify-between gap-3.5 items-center border-b border-muted z-50">
             {/* Left */}
             <div className="flex gap-4 sm:gap-6 xl:gap-10 items-center transition-all transform-gpu">
                 {/* Branding */}
@@ -66,38 +79,30 @@ const Navbar = async (): Promise<ReactElement> => {
                     </h1>
                 </Link>
 
-                {/* Categories */}
+                {/* Links */}
                 <Protected>
-                    <div className="flex gap-2 sm:gap-3 items-center transition-all transform-gpu">
-                        {(
-                            await Promise.all(
-                                getAllPunishmentCategories().map((category) =>
-                                    fetchCategoryCount(category)
-                                )
-                            )
-                        ).map(({ category, count, error }) => (
-                            <Link
-                                key={category.type}
-                                className="px-2.5 py-1 flex gap-2 items-center bg-muted/40 text-sm rounded-lg hover:opacity-75 transition-all transform-gpu"
-                                href={`/records/${category.type}`}
-                                prefetch={false}
-                                draggable={false}
-                            >
-                                {cloneElement(category.icon, {
-                                    className: "hidden lg:flex size-3.5",
-                                })}
-
-                                <span>{category.displayName}s</span>
-                                <Badge
-                                    className="hidden md:flex px-2"
-                                    variant={error ? "destructive" : "outline"}
-                                    title={error ?? undefined}
-                                >
-                                    {error ? "Error" : numberWithCommas(count)}
-                                </Badge>
-                            </Link>
-                        ))}
-                    </div>
+                    <NavbarLinks
+                        links={[
+                            {
+                                name: "Home",
+                                icon: <HomeIcon />,
+                                href: "/",
+                            },
+                            {
+                                name: "Browse",
+                                content: (
+                                    <CategoriesDropdown
+                                        categories={categories}
+                                    />
+                                ),
+                            },
+                            {
+                                name: "Alts",
+                                icon: <UsersIcon />,
+                                href: "/alts",
+                            },
+                        ]}
+                    />
                 </Protected>
             </div>
 

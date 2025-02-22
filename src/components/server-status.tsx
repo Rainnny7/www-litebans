@@ -48,7 +48,7 @@ const ServerStatus = (): ReactElement => {
 
     return (
         <Code
-            className="hidden xs:flex py-1 text-xs gap-2"
+            className="hidden xs:flex py-1.5 text-xs gap-2"
             prefix={
                 <span className="flex gap-2 items-center">
                     <Image
@@ -57,14 +57,11 @@ const ServerStatus = (): ReactElement => {
                         width={16}
                         height={16}
                     />
-                    <span className="hidden xl:block">Players:</span>
+                    <span className="hidden sm:block">Players:</span>
                 </span>
             }
         >
-            {numberWithCommas(status.players.online)}
-            <span className="hidden lg:block">
-                /{numberWithCommas(status.players.max)}
-            </span>
+            {numberWithCommas(status.players.online)}/{numberWithCommas(status.players.max)}
         </Code>
     );
 };

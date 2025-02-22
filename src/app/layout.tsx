@@ -7,7 +7,7 @@ import { cn } from "~/common/utils";
 import DemoBanner from "~/components/demo-banner";
 import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
-import Navbar from "~/components/navbar";
+import Navbar from "~/components/navbar/navbar";
 import OnekoKitty from "~/components/oneko-kitty";
 import { Toaster } from "~/components/ui/sonner";
 import { env, isDemoMode, isUsingAnalytics } from "~/env";
