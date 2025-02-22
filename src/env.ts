@@ -1,6 +1,7 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { DateTime } from "luxon";
 import { z } from "zod";
+import { toDateTime } from "~/common/string";
 
 export const env = createEnv({
     server: {
@@ -46,9 +47,7 @@ export const env = createEnv({
         NEXT_PUBLIC_APP_DESCRIPTION: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
         NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
         NEXT_PUBLIC_BUILD_ID: process.env.SOURCE_COMMIT?.slice(0, 7) ?? "dev",
-        NEXT_PUBLIC_BUILD_TIME: DateTime.now().toLocaleString(
-            DateTime.DATETIME_SHORT
-        ),
+        NEXT_PUBLIC_BUILD_TIME: toDateTime(DateTime.now()),
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:

@@ -13,7 +13,7 @@ type SimpleTooltipProps = {
     /**
      * The content to display in the tooltip.
      */
-    content: string | ReactElement;
+    content: string | ReactElement | undefined;
 
     /**
      * The side to display the tooltip on.
@@ -36,12 +36,15 @@ const SimpleTooltip = ({
     content,
     side,
     children,
-}: SimpleTooltipProps): ReactElement => (
-    <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className="bg-muted text-white" side={side}>
-            {content}
-        </TooltipContent>
-    </Tooltip>
-);
+}: SimpleTooltipProps): ReactElement =>
+    content ? (
+        <Tooltip>
+            <TooltipTrigger asChild>{children}</TooltipTrigger>
+            <TooltipContent className="bg-muted text-white" side={side}>
+                {content}
+            </TooltipContent>
+        </Tooltip>
+    ) : (
+        <>{children}</>
+    );
 export default SimpleTooltip;

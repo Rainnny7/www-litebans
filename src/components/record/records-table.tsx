@@ -57,7 +57,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
                 <div className="flex gap-3 items-center">
                     <PlayerAvatar avatar={player?.avatar ?? STEVE_AVATAR} />
                     <span className="truncate">
-                        {player?.username ?? "Player (Bedrock?)"}
+                        {player?.username ?? "Unknown Player"}
                     </span>
                 </div>
             );

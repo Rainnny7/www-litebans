@@ -3,19 +3,23 @@ import { type ReactElement } from "react";
 import { STEVE_AVATAR } from "~/common/player";
 import { cn } from "~/common/utils";
 
-const PlayerAvatar = ({
-    avatar,
-    className,
-}: {
-    avatar: string | undefined;
+type PlayerAvatarProps = {
     className?: string;
-}): ReactElement => (
+    avatar: string | undefined;
+    size?: number;
+};
+
+const PlayerAvatar = ({
+    className,
+    avatar,
+    size = 22,
+}: PlayerAvatarProps): ReactElement => (
     <Image
         className={cn(className)}
         src={avatar ?? STEVE_AVATAR}
         alt="Player Avatar"
-        width={22}
-        height={22}
+        width={size}
+        height={size}
         draggable={false}
     />
 );

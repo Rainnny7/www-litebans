@@ -7,7 +7,11 @@ import { isAuthorized } from "~/actions/is-authorized";
 import { db } from "~/common/drizzle";
 import { Paginator } from "~/common/paginator";
 import { trackRecordFetch } from "~/common/umami";
-import { getPunishmentCategory } from "~/types/punishment-category";
+import { removeObjectFields } from "~/common/utils";
+import {
+    getPunishmentCategory,
+    type PunishmentCategoryInfo,
+} from "~/types/punishment-category";
 import {
     type BasePunishmentRecord,
     type TablePunishmentRecord,
@@ -143,10 +147,12 @@ async function fetchRecordsFromDatabase(
  * Map UUIDs in the given records to player data, which
  * is the player's actual username, and skin avatars.
  *
+ * @param category the category info
  * @param records the records to map
  * @returns the mapped records
  */
 async function mapPlayerData(
+    category: PunishmentCategoryInfo,
     records: BasePunishmentRecord[]
 ): Promise<TablePunishmentRecord[]> {
     console.log(
@@ -177,6 +183,7 @@ async function mapPlayerData(
         const permanent: boolean = record.until <= 0;
         return {
             ...record,
+            category: removeObjectFields(category, ["table"]),
             status:
                 !record.removedByUuid &&
                 (permanent || record.until > Date.now())
@@ -235,7 +242,7 @@ export const GET = async (request: NextRequest) => {
         const paginatedPage = await new Paginator<BasePunishmentRecord>()
             .setItemsPerPage(itemsPerPage)
             .setTotalItems(totalRecords)
-            .getPage(page, async () => mapPlayerData(records));
+            .getPage(page, async () => mapPlayerData(category, records));
 
         return Response.json({
             ...paginatedPage,

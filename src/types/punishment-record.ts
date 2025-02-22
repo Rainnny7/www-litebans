@@ -1,3 +1,5 @@
+import { type PunishmentCategoryInfo } from "~/types/punishment-category";
+
 /**
  * A base punishment record type.
  */
@@ -31,6 +33,7 @@ export type PunishmentRecordStatus = "active" | "removed" | "expired";
  * A punishment record type with additional data for the data table.
  */
 export type TablePunishmentRecord = BasePunishmentRecord & {
+    category: PunishmentCategoryInfo;
     status: PunishmentRecordStatus;
     permanent: boolean;
     player?: TablePlayerData | undefined;

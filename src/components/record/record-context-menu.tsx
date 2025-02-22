@@ -1,4 +1,4 @@
-import { Fingerprint, IdCard, Info, PencilLine } from "lucide-react";
+import { Copy, Fingerprint, IdCard, Info, PencilLine } from "lucide-react";
 import { type ReactNode } from "react";
 import { copyWithToast } from "~/common/utils";
 import RecordDialog from "~/components/record/record-dialog";
@@ -8,6 +8,9 @@ import {
     ContextMenuContent,
     ContextMenuItem,
     ContextMenuSeparator,
+    ContextMenuSub,
+    ContextMenuSubContent,
+    ContextMenuSubTrigger,
     ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { type TablePunishmentRecord } from "~/types/punishment-record";
@@ -18,35 +21,46 @@ type RecordContextMenuProps = {
 };
 
 const RecordContextMenu = ({ record, children }: RecordContextMenuProps) => {
-    const playerName: string = record.player?.username ?? "Unknown";
+    const playerName: string = record.player?.username ?? "Unknown Player";
     return (
         <ContextMenu>
             <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
             <ContextMenuContent>
-                <ContextMenuItem
-                    onClick={async () =>
-                        copyWithToast(playerName, `Copied Player Name`)
-                    }
-                >
-                    <PencilLine />
-                    Copy Player Name
-                </ContextMenuItem>
-                <ContextMenuItem
-                    onClick={async () =>
-                        copyWithToast(record.uuid, `Copied Player UUID`)
-                    }
-                >
-                    <Fingerprint />
-                    Copy Player UUID
-                </ContextMenuItem>
-                <ContextMenuItem
-                    onClick={async () =>
-                        copyWithToast(record.id.toString(), `Copied Record ID`)
-                    }
-                >
-                    <IdCard />
-                    Copy Record ID
-                </ContextMenuItem>
+                <ContextMenuSub>
+                    <ContextMenuSubTrigger className="gap-2">
+                        <Copy className="text-muted-foreground" />
+                        Copy
+                    </ContextMenuSubTrigger>
+                    <ContextMenuSubContent className="w-36">
+                        <ContextMenuItem
+                            onClick={async () =>
+                                copyWithToast(playerName, `Copied Player Name`)
+                            }
+                        >
+                            <PencilLine />
+                            Player Name
+                        </ContextMenuItem>
+                        <ContextMenuItem
+                            onClick={async () =>
+                                copyWithToast(record.uuid, `Copied Player UUID`)
+                            }
+                        >
+                            <Fingerprint />
+                            Player UUID
+                        </ContextMenuItem>
+                        <ContextMenuItem
+                            onClick={async () =>
+                                copyWithToast(
+                                    record.id.toString(),
+                                    `Copied Record ID`
+                                )
+                            }
+                        >
+                            <IdCard />
+                            Record ID
+                        </ContextMenuItem>
+                    </ContextMenuSubContent>
+                </ContextMenuSub>
                 <ContextMenuSeparator />
                 <RecordDialog record={record}>
                     <Button
@@ -54,7 +68,7 @@ const RecordContextMenu = ({ record, children }: RecordContextMenuProps) => {
                         variant="ghost"
                     >
                         <Info />
-                        Info
+                        Details
                     </Button>
                 </RecordDialog>
             </ContextMenuContent>

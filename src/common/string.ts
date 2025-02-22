@@ -1,3 +1,4 @@
+import { DateTime, type Duration } from "luxon";
 import { createElement, type ReactElement } from "react";
 
 /**
@@ -29,9 +30,10 @@ const MINECRAFT_COLORS: Record<string, string> = {
  * @param str the string to capitalize
  * @return the capitalized string
  */
-export const capitalizeWords = (str: string | undefined): string | undefined =>
-    str &&
-    str.toLowerCase().replace(/\b\w/g, (char: string) => char.toUpperCase());
+export const capitalizeWords = (
+    str: string | undefined | null
+): string | undefined =>
+    str?.toLowerCase().replace(/\b\w/g, (char: string) => char.toUpperCase());
 
 /**
  * Truncate text to a maximum length.
@@ -73,3 +75,25 @@ export const formatMinecraftString = (text: string): ReactElement[] => {
         return elements;
     }, []);
 };
+
+/**
+ * Converts a duration to a human-readable string.
+ * Example: 1h 2m 3s
+ *
+ * @param time the duration to convert
+ * @returns the human-readable string
+ */
+export const toHumanReadableTime = (time: Duration) =>
+    Object.entries(time.shiftTo("hours", "minutes", "seconds").toObject())
+        .filter(([_, value]) => value !== 0)
+        .map(([unit, value]) => `${Math.floor(value)}${unit[0]}`)
+        .join(" ");
+
+/**
+ * Converts a date-time to a human-readable string.
+ *
+ * @param time the date to convert
+ * @returns the date-time string
+ */
+export const toDateTime = (time: DateTime) =>
+    time.toLocaleString(DateTime.DATETIME_SHORT);
