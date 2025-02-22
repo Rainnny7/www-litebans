@@ -53,7 +53,7 @@ export const truncateText = (text: string, maxLength: number): string =>
  * @returns JSX elements with appropriate colors
  */
 export const formatMinecraftString = (text: string): ReactElement[] => {
-    const parts = text.split(/(§[0-9a-fk-or])/);
+    const parts = text.replace(/&/g, "§").split(/(§[0-9a-fk-or])/);
     let currentColor = "#FFFFFF";
 
     return parts.reduce<ReactElement[]>((elements, part, index) => {
