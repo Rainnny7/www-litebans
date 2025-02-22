@@ -3,13 +3,14 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { isAuthorized } from "~/actions/is-authorized";
+import { isDemoMode } from "~/env";
 
 const isForbiddenRoute = createRouteMatcher(["/forbidden"]);
 
 export default clerkMiddleware(
     async (auth: ClerkMiddlewareAuth, req: NextRequest) => {
-        // Simply allow all routes to pass through for /forbidden.
-        if (isForbiddenRoute(req)) {
+        // Disable in demo mode, and on the /forbidden route.
+        if (isDemoMode || isForbiddenRoute(req)) {
             return NextResponse.next();
         }
 

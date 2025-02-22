@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { type ReactElement } from "react";
-import { STEVE_AVATAR } from "~/common/player";
+import { getPlayerAvatarUrl, STEVE_AVATAR } from "~/common/player";
 import { cn } from "~/common/utils";
 
 type PlayerAvatarProps = {
     className?: string;
-    avatar: string | undefined;
+    avatar: string | undefined | null;
     size?: number;
 };
 
@@ -16,7 +16,13 @@ const PlayerAvatar = ({
 }: PlayerAvatarProps): ReactElement => (
     <Image
         className={cn(className)}
-        src={avatar ?? STEVE_AVATAR}
+        src={
+            !avatar
+                ? STEVE_AVATAR
+                : avatar.length === 16 || avatar.length === 36
+                  ? getPlayerAvatarUrl(avatar)
+                  : avatar
+        }
         alt="Player Avatar"
         width={size}
         height={size}

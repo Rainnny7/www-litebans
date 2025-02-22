@@ -12,7 +12,8 @@ export type BasePunishmentRecord = {
     bannedByName: string | null;
     removedByUuid: string | null;
     removedByName: string | null;
-    removedByDate: number | null;
+    removedByDate: string | null;
+    removedByReason: string | null;
     time: number;
     until: number;
     serverScope: string | null;

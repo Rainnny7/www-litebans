@@ -78,7 +78,12 @@ const RecordDialog = ({ record, children }: RecordDialogProps) => (
             {/* Info */}
             <PlayerInformation record={record} />
             <Separator />
-            <RecordInformation record={record} />
+            <div className="flex justify-between">
+                <RecordInformation record={record} />
+                {record.status === "removed" && (
+                    <RecordRemovalInformation record={record} />
+                )}
+            </div>
         </DialogContent>
     </Dialog>
 );
@@ -204,6 +209,70 @@ const RecordInformation = ({ record }: { record: TablePunishmentRecord }) => {
                             {capitalizeWords(record.serverOrigin) ?? "Unknown"}{" "}
                             • (Scope: {record.serverScope})
                         </>
+                    }
+                />
+            </div>
+        </div>
+    );
+};
+
+const RecordRemovalInformation = ({
+    record,
+}: {
+    record: TablePunishmentRecord;
+}) => {
+    // Get the removal time
+    const rawRemovalTime = DateTime.fromISO(record.removedByDate ?? "");
+    const getRemovalTime = useCallback(
+        () => toHumanReadableTime(rawRemovalTime.toMillis() - Date.now()),
+        [rawRemovalTime]
+    );
+    const [removalTime, setRemovalTime] = useState<string | false>(
+        getRemovalTime()
+    );
+
+    // Update the removal time every second
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRemovalTime(getRemovalTime());
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [getRemovalTime]);
+
+    return (
+        <div className="flex flex-col">
+            <h1 className="font-bold">Removal Information</h1>
+            <div className="mt-2.5 flex flex-col gap-2">
+                <InfoElement
+                    name="Removed for"
+                    icon={<Gavel />}
+                    value={formatMinecraftString(
+                        `§7${record.removedByReason ?? "No Reason"}`
+                    )}
+                    inline={false}
+                />
+                <InfoElement
+                    name="Removed by"
+                    icon={<Fingerprint />}
+                    value={
+                        <>
+                            <PlayerAvatar
+                                avatar={record.removedByUuid}
+                                size={20}
+                            />
+                            {record.removedByName}
+                        </>
+                    }
+                />
+                <InfoElement
+                    name="Removed"
+                    icon={<Calendar />}
+                    value={
+                        <SimpleTooltip
+                            content={`Removed on ${toDateTime(rawRemovalTime)}`}
+                        >
+                            <div>{removalTime}</div>
+                        </SimpleTooltip>
                     }
                 />
             </div>
