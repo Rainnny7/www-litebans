@@ -42,9 +42,12 @@ export const isAuthorized = async ({
             const redisCacheKey = `www-litebans:discord-roles:${userId}`;
 
             // Before reaching out to Discord, check the cache.
-            const cachedRoles: string[] = await redis.smembers(redisCacheKey);
-            if (cachedRoles && cachedRoles.length > 0) {
-                return cachedRoles;
+            if (redis) {
+                const cachedRoles: string[] =
+                    await redis.smembers(redisCacheKey);
+                if (cachedRoles && cachedRoles.length > 0) {
+                    return cachedRoles;
+                }
             }
 
             // Fetch the user's Discord roles from the API.
@@ -76,7 +79,7 @@ export const isAuthorized = async ({
             const roles = (await membershipResponse.json()).roles;
 
             // Before returning the result, cache it.
-            if (roles && roles.length > 0) {
+            if (redis && roles && roles.length > 0) {
                 const pipeline = redis.pipeline();
                 for (const role of roles) {
                     pipeline.sadd(redisCacheKey, role);
