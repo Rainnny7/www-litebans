@@ -6,11 +6,12 @@ import { isAuthorized } from "~/actions/is-authorized";
 import { isDemoMode } from "~/env";
 
 const isForbiddenRoute = createRouteMatcher(["/forbidden"]);
+const isShareRoute = createRouteMatcher(["/share/:slug"]);
 
 export default clerkMiddleware(
     async (auth: ClerkMiddlewareAuth, req: NextRequest) => {
-        // Disable in demo mode, and on the /forbidden route.
-        if (isDemoMode || isForbiddenRoute(req)) {
+        // Disable in demo mode, and on the /forbidden and share routes.
+        if (isDemoMode || isForbiddenRoute(req) || isShareRoute(req)) {
             return NextResponse.next();
         }
 

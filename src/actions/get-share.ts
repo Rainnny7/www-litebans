@@ -14,7 +14,6 @@ import { RecordShare } from "~/types/record-share";
 export const getShare = async (
     key: string
 ): Promise<RecordShare | undefined> => {
-    await handleAuthCheck(); // Ensure the user is authorized
     if (!redis) notFound();
     const before: number = performance.now();
 
@@ -28,5 +27,11 @@ export const getShare = async (
     console.log(
         `[Action::getShare] Took ${performance.now() - before}ms to get share with key ${key}`
     );
-    return share as any as RecordShare;
+    const recordShare: RecordShare = (share as any).json as RecordShare;
+
+    // Ensure the user is authorized if the share is protected
+    if (recordShare.protected) {
+        await handleAuthCheck();
+    }
+    return recordShare;
 };
