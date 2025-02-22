@@ -27,6 +27,10 @@ export const isAuthorized = async ({
 }: {
     userId: string;
 }): Promise<boolean> => {
+    // If we're in demo mode, always authorize the user
+    if (env.NEXT_PUBLIC_DEMO_MODE) {
+        return true;
+    }
     const before: number = performance.now();
     console.log(
         `[Action::isAuthorized] Checking if user ${userId} is authorized...`

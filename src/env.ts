@@ -16,8 +16,8 @@ export const env = createEnv({
         DRIZZLE_DATABASE_URL: z.string(),
 
         // Redis
-        UPSTASH_REDIS_REST_URL: z.string(),
-        UPSTASH_REDIS_REST_TOKEN: z.string(),
+        UPSTASH_REDIS_REST_URL: z.string().optional(),
+        UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
         // Analytics
         ANALYTICS_HOST: z.string().optional(),
@@ -31,6 +31,7 @@ export const env = createEnv({
         NEXT_PUBLIC_APP_LOGO: z.string(),
         NEXT_PUBLIC_BUILD_ID: z.string(),
         NEXT_PUBLIC_BUILD_TIME: z.string(),
+        NEXT_PUBLIC_DEMO_MODE: z.boolean().optional(),
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -48,6 +49,7 @@ export const env = createEnv({
         NEXT_PUBLIC_APP_LOGO: process.env.NEXT_PUBLIC_APP_LOGO,
         NEXT_PUBLIC_BUILD_ID: process.env.SOURCE_COMMIT?.slice(0, 7) ?? "dev",
         NEXT_PUBLIC_BUILD_TIME: toDateTime(DateTime.now()),
+        NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE === "true",
 
         // Clerk
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
@@ -86,4 +88,5 @@ export const env = createEnv({
 });
 
 export const isProd = env.NODE_ENV === "production";
-export const isUsingAnalytics = isProd && env.ANALYTICS_HOST && env.ANALYTICS_ID;
+export const isUsingAnalytics =
+    isProd && env.ANALYTICS_HOST && env.ANALYTICS_ID;

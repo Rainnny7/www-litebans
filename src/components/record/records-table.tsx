@@ -98,7 +98,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
                     ? formatMinecraftString(
                           truncate ? truncateText(reason, 32) : reason
                       )
-                    : "No reason specified";
+                    : "No Reason";
             return (
                 <div className="max-h-12 overflow-hidden">
                     <SimpleTooltip content={<span>{colorReason(false)}</span>}>
