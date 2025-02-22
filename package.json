@@ -47,6 +47,7 @@
         "next-themes": "^0.4.4",
         "next-view-transitions": "^0.3.4",
         "react": "^19.0.0",
+        "react-countup": "^6.5.3",
         "react-day-picker": "^9.5.1",
         "react-dom": "^19.0.0",
         "restfulmc-lib": "^1.1.4",
@@ -71,7 +72,6 @@
         "eslint-config-next": "^15.1.7",
         "postcss": "^8.5.2",
         "prettier": "^3.5.1",
-        "prettier-plugin-organize-imports": "^4.1.0",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "tailwindcss": "^4.0.6",
         "typescript": "^5.7.3"

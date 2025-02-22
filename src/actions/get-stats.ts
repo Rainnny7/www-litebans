@@ -14,6 +14,12 @@ import {
     PunishmentType,
 } from "~/types/punishment-category";
 
+/**
+ * Get the stats for the currently
+ * connected LiteBans instance.
+ *
+ * @returns the instance stats
+ */
 export const getStats = async (): Promise<InstanceStats> => {
     // Check if the user is authorized
     const { userId } = await auth();

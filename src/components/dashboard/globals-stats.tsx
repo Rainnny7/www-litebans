@@ -4,9 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { CircleHelp, LucideProps, Users } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { cloneElement, ReactElement } from "react";
+import CountUp from "react-countup";
 import { getStats } from "~/actions/get-stats";
 import { capitalizeWords } from "~/common/string";
-import { cn, numberWithCommas } from "~/common/utils";
+import { cn } from "~/common/utils";
 import DashboardCard from "~/components/dashboard/dashboard-card";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
@@ -26,7 +27,7 @@ const GlobalsStats = (): ReactElement => {
                 description="The total number of players."
                 icon={<Users />}
                 value={
-                    stats ? numberWithCommas(stats.uniquePlayers) : undefined
+                    stats ? <CountUp end={stats.uniquePlayers} /> : undefined
                 }
             />
 
@@ -40,9 +41,9 @@ const GlobalsStats = (): ReactElement => {
                         getPunishmentCategory(category)?.icon ?? <CircleHelp />
                     }
                     value={
-                        stats
-                            ? numberWithCommas(stats.categoryStats[category])
-                            : undefined
+                        stats ? (
+                            <CountUp end={stats.categoryStats[category]} />
+                        ) : undefined
                     }
                     href={`/records/${category}`}
                 />
