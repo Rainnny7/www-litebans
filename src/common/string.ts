@@ -1,4 +1,4 @@
-import { DateTime, type Duration } from "luxon";
+import { DateTime } from "luxon";
 import { createElement, type ReactElement } from "react";
 
 /**
@@ -22,6 +22,16 @@ const MINECRAFT_COLORS: Record<string, string> = {
     e: "#FFFF55", // Yellow
     f: "#FFFFFF", // White
 };
+
+const TIME_UNITS: Array<{ unit: string; ms: number }> = [
+    { unit: "y", ms: 31536000000 },
+    { unit: "mo", ms: 2592000000 },
+    { unit: "d", ms: 86400000 },
+    { unit: "h", ms: 3600000 },
+    { unit: "m", ms: 60000 },
+    { unit: "s", ms: 1000 },
+    { unit: "ms", ms: 1 },
+];
 
 /**
  * Capitalize the first letter of
@@ -83,11 +93,23 @@ export const formatMinecraftString = (text: string): ReactElement[] => {
  * @param time the duration to convert
  * @returns the human-readable string
  */
-export const toHumanReadableTime = (time: Duration) =>
-    Object.entries(time.shiftTo("hours", "minutes", "seconds").toObject())
-        .filter(([_, value]) => value !== 0)
-        .map(([unit, value]) => `${Math.floor(value)}${unit[0]}`)
-        .join(" ");
+export const toHumanReadableTime = (time: number) => {
+    if (time < 0) time = -time;
+    const result = [];
+    let remainingMs = time;
+
+    for (const { unit, ms: unitMs } of TIME_UNITS) {
+        const count = Math.floor(remainingMs / unitMs);
+        if (count > 0) {
+            result.push(`${count}${unit}`);
+            remainingMs -= count * unitMs;
+        }
+        // Stop after two units have been added
+        if (result.length === 2) break;
+    }
+
+    return result.join(", ") || "0s";
+};
 
 /**
  * Converts a date-time to a human-readable string.
