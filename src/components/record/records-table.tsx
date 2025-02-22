@@ -41,7 +41,7 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         size: 45,
         enableSorting: false,
         cell: ({ row }) => (
-            <div className="hidden md:table-cell text-zinc-300/75">
+            <div className="text-zinc-300/75">
                 {numberWithCommas(row.getValue("id"))}
             </div>
         ),
@@ -102,7 +102,9 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
             return (
                 <div className="max-h-12 overflow-hidden">
                     <SimpleTooltip content={<span>{colorReason(false)}</span>}>
-                        <div className="w-fit">{colorReason(true)}</div>
+                        <div className="w-fit truncate">
+                            {colorReason(true)}
+                        </div>
                     </SimpleTooltip>
                 </div>
             );
@@ -119,7 +121,9 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
                 <SimpleTooltip
                     content={issued.toLocaleString(DateTime.DATETIME_MED)}
                 >
-                    <div className="w-fit">{issued.toRelative()}</div>
+                    <div className="min-w-[6.5rem] w-fit">
+                        {issued.toRelative()}
+                    </div>
                 </SimpleTooltip>
             );
         },
