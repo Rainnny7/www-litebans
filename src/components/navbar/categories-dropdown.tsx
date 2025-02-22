@@ -2,7 +2,7 @@ import { BookOpenIcon } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { cloneElement, type ReactElement } from "react";
 import { cn, numberWithCommas } from "~/common/utils";
-import { PunishmentCategoryWithCount } from "~/components/navbar/navbar";
+import { PunishmentCategoryWithCount } from "~/components/navbar/navbar-links";
 import {
     NavigationMenuContent,
     NavigationMenuLink,
