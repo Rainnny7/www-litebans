@@ -23,7 +23,7 @@ const CategoriesDropdown = ({
             {categories.map(({ category, count, error }) => (
                 <NavigationMenuLink
                     key={category.type}
-                    className="p-2.5 flex-row gap-2 items-center hover:bg-muted/45"
+                    className="p-2.5 flex-row gap-2 items-center hover:bg-muted/45 cursor-default"
                     asChild
                 >
                     <Link
