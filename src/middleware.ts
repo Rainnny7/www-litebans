@@ -3,15 +3,14 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { isAuthorized } from "~/actions/is-authorized";
-import { isDemoMode } from "~/env";
 
 const isForbiddenRoute = createRouteMatcher(["/forbidden"]);
 const isShareRoute = createRouteMatcher(["/share/:slug"]);
 
 export default clerkMiddleware(
     async (auth: ClerkMiddlewareAuth, req: NextRequest) => {
-        // Disable in demo mode, and on the /forbidden and share routes.
-        if (isDemoMode || isForbiddenRoute(req) || isShareRoute(req)) {
+        // On the /forbidden and share routes.
+        if (isForbiddenRoute(req) || isShareRoute(req)) {
             return NextResponse.next();
         }
 
