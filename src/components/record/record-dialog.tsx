@@ -67,11 +67,15 @@ const RecordDialog = ({ record, children }: RecordDialogProps) => (
                         )}
                     </div>
                 </DialogTitle>
+
+                {/* ID & Category */}
                 <DialogDescription>
                     ID: #{numberWithCommas(record.id)} •{" "}
                     {record.category.displayName}
                 </DialogDescription>
             </DialogHeader>
+
+            {/* Info */}
             <PlayerInformation record={record} />
             <Separator />
             <RecordInformation record={record} />
@@ -178,7 +182,7 @@ const RecordInformation = ({ record }: { record: TablePunishmentRecord }) => {
                         >
                             <div className="flex gap-1 items-center">
                                 {duration}
-                                {remaining && ` (${remaining} remaining)`}
+                                {remaining && ` • (${remaining} remaining)`}
                             </div>
                         </SimpleTooltip>
                     }
@@ -200,7 +204,7 @@ const RecordInformation = ({ record }: { record: TablePunishmentRecord }) => {
                     value={
                         <>
                             {capitalizeWords(record.serverOrigin) ?? "Unknown"}{" "}
-                            - (Scope: {record.serverScope})
+                            • (Scope: {record.serverScope})
                         </>
                     }
                 />
