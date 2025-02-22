@@ -1,6 +1,6 @@
 "use server";
 
-import superjson from "superjson";
+import SuperJSON from "superjson";
 import { handleAuthCheck } from "~/common/auth";
 import { redis } from "~/common/redis";
 import { generateRandom } from "~/common/string";
@@ -8,6 +8,13 @@ import { PunishmentType } from "~/types/punishment-category";
 import { TablePunishmentRecord } from "~/types/punishment-record";
 import { RecordShare } from "~/types/record-share";
 
+/**
+ * Create a new record share.
+ *
+ * @param form the form with the share options
+ * @param record the record to share
+ * @returns the created share
+ */
 export const shareRecord = async (
     form: FormData,
     record: TablePunishmentRecord
@@ -33,7 +40,7 @@ export const shareRecord = async (
         await redis.setex(
             `www-litebans:share:${share.key}`,
             60 * 60, // 1 hour
-            superjson.stringify(share)
+            SuperJSON.stringify(share)
         );
     }
     console.log(
