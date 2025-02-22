@@ -257,7 +257,11 @@ const RecordRemovalInformation = ({
                     value={
                         <>
                             <PlayerAvatar
-                                avatar={record.removedByUuid}
+                                avatar={
+                                    record.removedByUuid === "CONSOLE"
+                                        ? CONSOLE_AVATAR
+                                        : record.removedByUuid
+                                }
                                 size={20}
                             />
                             {record.removedByName}
