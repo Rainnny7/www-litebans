@@ -4,7 +4,7 @@ import { type ClerkClient } from "@clerk/backend";
 import { clerkClient } from "@clerk/nextjs/server";
 import { AppCache, fetchWithCache } from "~/common/cache";
 import { redis } from "~/common/redis";
-import { env } from "~/env";
+import { env, isDemoMode } from "~/env";
 
 const DISCORD_ROLE_CACHE_TTL = 300; // 5 minutes
 const roleMemoryCache = new AppCache({
@@ -28,7 +28,7 @@ export const isAuthorized = async ({
     userId: string;
 }): Promise<boolean> => {
     // If we're in demo mode, always authorize the user
-    if (env.NEXT_PUBLIC_DEMO_MODE) {
+    if (isDemoMode) {
         return true;
     }
     const before: number = performance.now();

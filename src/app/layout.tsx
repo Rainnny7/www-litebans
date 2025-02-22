@@ -4,12 +4,13 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import type { ReactElement, ReactNode } from "react";
 import { cn } from "~/common/utils";
+import DemoBanner from "~/components/demo-banner";
 import Footer from "~/components/footer";
 import HeroPattern from "~/components/hero-pattern";
 import Navbar from "~/components/navbar";
 import OnekoKitty from "~/components/oneko-kitty";
 import { Toaster } from "~/components/ui/sonner";
-import { env, isUsingAnalytics } from "~/env";
+import { env, isDemoMode, isUsingAnalytics } from "~/env";
 import AppProviders from "~/providers/app-providers";
 import "~/styles/globals.css";
 
@@ -64,6 +65,7 @@ const RootLayout = ({
                 <div className="min-h-screen px-7 pb-5 max-w-(--breakpoint-xl) mx-auto flex flex-col gap-5">
                     <HeroPattern />
                     <Navbar />
+                    {isDemoMode && <DemoBanner />}
                     {children}
                     <Footer />
                 </div>

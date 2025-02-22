@@ -88,5 +88,6 @@ export const env = createEnv({
 });
 
 export const isProd = env.NODE_ENV === "production";
+export const isDemoMode = env.NEXT_PUBLIC_DEMO_MODE;
 export const isUsingAnalytics =
-    isProd && env.ANALYTICS_HOST && env.ANALYTICS_ID;
+    isProd && !isDemoMode && env.ANALYTICS_HOST && env.ANALYTICS_ID;

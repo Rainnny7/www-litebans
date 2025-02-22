@@ -3,12 +3,12 @@ import { count } from "drizzle-orm";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
 import { cloneElement, type ReactElement } from "react";
-import { db } from "~/common/drizzle";
 import { numberWithCommas } from "~/common/utils";
 import Protected from "~/components/auth/protected";
 import ServerStatus from "~/components/server-status";
 import { Badge } from "~/components/ui/badge";
 import { env } from "~/env";
+import { db } from "~/common/drizzle";
 import {
     getAllPunishmentCategories,
     type TypedPunishmentCategoryInfo,
