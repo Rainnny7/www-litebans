@@ -1,6 +1,7 @@
-export const STEVE_AVATAR = "https://api.restfulmc.cc/player/head/Steve.png";
+export const STEVE_AVATAR =
+    "https://api.restfulmc.cc/player/head/Steve.png?size=32";
 export const CONSOLE_AVATAR =
-    "https://api.restfulmc.cc/player/head/Console.png";
+    "https://api.restfulmc.cc/player/head/Console.png?size=32";
 
 /**
  * Checks if a UUID is a Bedrock UUID

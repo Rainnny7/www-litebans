@@ -92,6 +92,7 @@ export const formatMinecraftString = (text: string): ReactElement[] => {
  *
  * @param time the duration to convert
  * @returns the human-readable string
+ * @credit http://github.com/RealFascinated - lee xo
  */
 export const toHumanReadableTime = (time: number) => {
     if (time < 0) time = -time;

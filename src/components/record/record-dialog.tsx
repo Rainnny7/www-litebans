@@ -9,7 +9,7 @@ import {
     Timer,
     type LucideProps,
 } from "lucide-react";
-import { DateTime, Duration } from "luxon";
+import { DateTime } from "luxon";
 import {
     cloneElement,
     useCallback,
@@ -116,7 +116,7 @@ const PlayerInformation = ({ record }: { record: TablePunishmentRecord }) => (
 const RecordInformation = ({ record }: { record: TablePunishmentRecord }) => {
     const duration: string = record.permanent
         ? "Permanent"
-        : toHumanReadableTime(Duration.fromMillis(record.until - record.time));
+        : toHumanReadableTime(record.until - record.time);
 
     // Get the remaining time
     const getRemaining = useCallback(() => {
@@ -124,16 +124,14 @@ const RecordInformation = ({ record }: { record: TablePunishmentRecord }) => {
             record.status === "active" &&
             !record.permanent &&
             record.until > Date.now() &&
-            toHumanReadableTime(Duration.fromMillis(record.until - Date.now()))
+            toHumanReadableTime(record.until - Date.now())
         );
     }, [record]);
     const [remaining, setRemaining] = useState<string | false>(getRemaining());
 
     // Get the age time
     const getAge = useCallback(() => {
-        return toHumanReadableTime(
-            Duration.fromMillis(Date.now() - record.time)
-        );
+        return toHumanReadableTime(Date.now() - record.time);
     }, [record]);
     const [age, setAge] = useState<string | false>(getAge());
 

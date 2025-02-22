@@ -61,7 +61,7 @@ export const fetchPlayerData = async (
                 avatar:
                     isUuid && isBedrockUuid(query)
                         ? STEVE_AVATAR
-                        : `https://api.restfulmc.cc/player/head/${query}.png`,
+                        : `https://api.restfulmc.cc/player/head/${query}.png?size=32`,
             };
         } catch (err) {
             return undefined;
