@@ -39,7 +39,7 @@ const CategoriesDropdown = ({
                         {/* Text */}
                         <div className="flex flex-col">
                             <div className="font-medium">
-                                Browse {category.displayName}s
+                                {category.displayName}s
                             </div>
                             <p
                                 className={cn(

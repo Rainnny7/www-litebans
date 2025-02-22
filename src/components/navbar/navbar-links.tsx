@@ -25,12 +25,18 @@ const NavbarLinks = ({ links }: { links: NavbarLink[] }): ReactElement => (
             {links.map((link) => (
                 <NavigationMenuItem key={link.name}>
                     {link.href ? (
-                        <Link href={link.href} legacyBehavior passHref>
+                        <Link
+                            href={link.href}
+                            prefetch={false}
+                            legacyBehavior
+                            passHref
+                        >
                             <NavigationMenuLink
                                 className={cn(
                                     navigationMenuTriggerStyle(),
                                     "px-2.5 py-1 h-8 flex flex-row gap-2 items-center bg-muted/40 text-sm rounded-lg hover:bg-muted/25 cursor-default transition-all transform-gpu"
                                 )}
+                                draggable={false}
                             >
                                 {link.icon &&
                                     cloneElement(link.icon, {
