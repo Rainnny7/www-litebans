@@ -61,7 +61,8 @@ const ServerStatus = (): ReactElement => {
                 </span>
             }
         >
-            {numberWithCommas(status.players.online)}/{numberWithCommas(status.players.max)}
+            {numberWithCommas(status.players.online)}/
+            {numberWithCommas(status.players.max)}
         </Code>
     );
 };
