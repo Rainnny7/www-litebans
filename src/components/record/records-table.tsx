@@ -22,15 +22,14 @@ import PaginationControls from "~/components/pagination-controls";
 import PlayerAvatar from "~/components/player-avatar";
 import RecordContextMenu from "~/components/record/record-context-menu";
 import RecordDialog from "~/components/record/record-dialog";
+import RecordSkeleton from "~/components/record/record-skeleton";
+import RecordStatus from "~/components/record/record-status";
 import SimpleTooltip from "~/components/simple-tooltip";
 import { Button } from "~/components/ui/button";
 import { DataTable } from "~/components/ui/data-table";
 import { Input } from "~/components/ui/input";
-import { Skeleton } from "~/components/ui/skeleton";
-import { TableCell, TableRow } from "~/components/ui/table";
 import { type PunishmentCategoryInfo } from "~/types/punishment-category";
 import {
-    type BasePunishmentRecord,
     type TablePlayerData,
     type TablePunishmentRecord,
 } from "~/types/punishment-record";
@@ -126,6 +125,13 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
         },
     },
     {
+        accessorKey: "status",
+        header: "Status",
+        size: 20,
+        enableSorting: false,
+        cell: ({ row }) => <RecordStatus status={row.original.status} />,
+    },
+    {
         accessorKey: "actions",
         header: () => <div className="text-center">Actions</div>,
         size: 20,
@@ -150,8 +156,6 @@ const COLUMNS: ColumnDef<TablePunishmentRecord>[] = [
     },
 ];
 const DEBOUNCE_TIME = 500;
-
-type RecordsResponseType = Page<BasePunishmentRecord> & { time: number };
 
 const RecordsTable = ({
     category,
@@ -226,7 +230,9 @@ const RecordsTable = ({
         ],
         queryFn: async () => {
             try {
-                return await api.get<RecordsResponseType>("/api/records", {
+                return await api.get<
+                    Page<TablePunishmentRecord> & { time: number }
+                >("/api/records", {
                     searchParams: {
                         category: category.id,
                         page,
@@ -291,7 +297,7 @@ const RecordsTable = ({
                                 data={records?.items ?? []}
                                 loading={loading}
                                 rowsPerPage={itemsPerPage}
-                                skeletonRow={<SkeletonRow />}
+                                skeletonRow={<RecordSkeleton />}
                                 contextMenu={(row) => (
                                     <RecordContextMenu record={row.original} />
                                 )}
@@ -382,34 +388,5 @@ const SearchInput = ({
         </div>
     );
 };
-
-const SkeletonRow = ({ opacity = 1 }: { opacity?: number }): ReactElement => (
-    <TableRow style={{ opacity }}>
-        <TableCell className="hidden md:table-cell text-zinc-300/75">
-            <Skeleton className="w-12 h-4" />
-        </TableCell>
-        <TableCell>
-            <div className="flex gap-3 items-center">
-                <Skeleton className="w-[22px] h-[22px] rounded-sm" />
-                <Skeleton className="w-24 h-4" />
-            </div>
-        </TableCell>
-        <TableCell>
-            <div className="flex gap-3 items-center">
-                <Skeleton className="w-[22px] h-[22px] rounded-sm" />
-                <Skeleton className="w-24 h-4" />
-            </div>
-        </TableCell>
-        <TableCell className="max-h-6 overflow-hidden">
-            <Skeleton className="w-48 h-4" />
-        </TableCell>
-        <TableCell>
-            <Skeleton className="w-16 h-4" />
-        </TableCell>
-        <TableCell className="flex justify-center">
-            <Skeleton className="w-[22px] h-[22px] rounded-sm" />
-        </TableCell>
-    </TableRow>
-);
 
 export default RecordsTable;

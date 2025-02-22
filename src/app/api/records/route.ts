@@ -173,15 +173,24 @@ async function mapPlayerData(
     );
 
     // Map the records using the lookup map
-    const mappedRecords = records.map(
-        (record): TablePunishmentRecord => ({
+    const mappedRecords = records.map((record): TablePunishmentRecord => {
+        const permanent: boolean = record.until <= 0;
+        return {
             ...record,
+            status:
+                !record.removedByUuid &&
+                (permanent || record.until > Date.now())
+                    ? "active"
+                    : record.removedByUuid
+                      ? "removed"
+                      : "expired",
+            permanent,
             player: uuidLookup[record.uuid],
             staff: record.bannedByUuid
                 ? uuidLookup[record.bannedByUuid]
                 : undefined,
-        })
-    );
+        };
+    });
     console.log(
         `[API::fetchRecords] Took ${performance.now() - before}ms to map UUID -> Minecraft Account for ${mappedRecords.length} records`
     );

@@ -1,3 +1,6 @@
+/**
+ * A base punishment record type.
+ */
 export type BasePunishmentRecord = {
     id: number;
     uuid: string;
@@ -5,6 +8,9 @@ export type BasePunishmentRecord = {
     reason: string;
     bannedByUuid: string | null;
     bannedByName: string | null;
+    removedByUuid: string | null;
+    removedByName: string | null;
+    removedByDate: number | null;
     time: number;
     until: number;
     serverScope: string | null;
@@ -16,11 +22,24 @@ export type BasePunishmentRecord = {
     template: number;
 };
 
+/**
+ * The status of a punishment record.
+ */
+export type PunishmentRecordStatus = "active" | "removed" | "expired";
+
+/**
+ * A punishment record type with additional data for the data table.
+ */
 export type TablePunishmentRecord = BasePunishmentRecord & {
+    status: PunishmentRecordStatus;
+    permanent: boolean;
     player?: TablePlayerData | undefined;
     staff?: TablePlayerData | undefined;
 };
 
+/**
+ * Player data for each player in a {@link TablePunishmentRecord}.
+ */
 export type TablePlayerData = {
     uuid: string;
     username: string;
